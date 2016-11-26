@@ -1,0 +1,7 @@
+source https://www.nuget.org/api/v2
+nuget FAKE
+nuget Frank
+nuget FSharp.Azure.Storage
+nuget FSharp.Core
+nuget Microsoft.AspNet.WebApi.Client
+nuget Microsoft.AspNet.WebApi.SelfHost
