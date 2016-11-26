@@ -3,5 +3,7 @@ nuget FAKE
 nuget Frank
 nuget FSharp.Azure.Storage
 nuget FSharp.Core
+nuget FSharp.Data
 nuget Microsoft.AspNet.WebApi.Client
 nuget Microsoft.AspNet.WebApi.SelfHost
+nuget PowerPack

@@ -1,6 +1,6 @@
 namespace DG.O365.Adoption.RulesEngine
-module Main =
 
+module Main =
   open System
   open System.Net
   open System.Net.Http
@@ -12,8 +12,13 @@ module Main =
   open Frank
   open FSharp.Control
   open Http
+  open Config
 
-  let baseUri = "http://localhost:8080"
+  printfn "%s" "Validating configuration ..."
+  validateConfig
+  printfn "%s" "Configuration valid."
+
+  let baseUri = "http://localhost:" + appconfig.Item("Port")
   let config = new HttpSelfHostConfiguration(baseUri)
   config |> register [ helloResource ]
 
