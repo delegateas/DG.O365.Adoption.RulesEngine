@@ -1,7 +1,6 @@
 FSharp.Core
 Frank
 Microsoft.AspNet.WebApi.SelfHost
-Microsoft.AspNet.WebApi.Client
 FSharp.Azure.Storage
 PowerPack
 FSharp.Data

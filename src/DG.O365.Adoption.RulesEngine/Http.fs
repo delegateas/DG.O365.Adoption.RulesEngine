@@ -1,34 +1,31 @@
 namespace DG.O365.Adoption.RulesEngine
-module Http =
 
+module Http =
   open System
-  open System.Globalization
   open System.Net
   open System.Net.Http
   open System.Net.Http.Formatting
   open System.Net.Http.Headers
   open System.Web.Http
   open System.Web.Http.HttpResource
+  open Newtonsoft.Json
   open Frank
+  open Model
+  open Config
+  open Engine
 
   // Supported formatters for content-negotiation
   let formatters = [| new JsonMediaTypeFormatter() :> MediaTypeFormatter
                       new XmlMediaTypeFormatter() :> MediaTypeFormatter |]
 
-  // Respond with a web page containing "Hello, world!" and a form submission to use the POST method of the resource.
-  let helloWorld request =
-    respond HttpStatusCode.OK
-    <| ``Content-Type`` "text/html"
-    <| Some(Formatted (@"<!doctype html>
-<meta charset=utf-8>
-<title>Hello</title>
-<p>Hello, world!
-<form action=""/"" method=""post"">
-<input type=""hidden"" name=""text"" value=""testing"">
-<input type=""submit"">", System.Text.Encoding.UTF8, "text/html"))
-  <| request
-  |> async.Return
+  let testRule (request :HttpRequestMessage) =
+    async {
+      let json = request.Content.ReadAsStringAsync().Result
+      let rule = JsonConvert.DeserializeObject<RuleInvocation>(json)
+      handleRule rule.Rule rule.ForUser rule.ToUser
+      return new HttpResponseMessage(HttpStatusCode.OK) }
 
-  let echo = runConneg formatters <| fun request -> request.Content.ReadAsStringAsync() |> Async.AwaitTask
+  let testRuleResource = route "/api/testrule" <| post testRule
 
-  let helloResource = route "/" (get helloWorld <|> post echo)
+
+

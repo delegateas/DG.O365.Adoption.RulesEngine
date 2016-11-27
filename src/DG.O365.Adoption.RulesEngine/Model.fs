@@ -5,6 +5,7 @@ module Model =
 
   type DocumentationLink = string
   type Message = string
+  type UserId = string // Assumed an email at this time
 
   type Rule =
     { [<PartitionKey>] DocumentationLink :DocumentationLink
@@ -13,8 +14,13 @@ module Model =
       Reducer :string
       Message :Message }
 
+  type RuleInvocation =
+    { Rule :Rule
+      ForUser :UserId
+      ToUser :UserId }
+
   type Notification =
-    { UserId :string
+    { UserId :UserId
       Message :Message
       DocumentationLink :DocumentationLink }
 

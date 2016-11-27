@@ -4,6 +4,7 @@ nuget Frank
 nuget FSharp.Azure.Storage
 nuget FSharp.Core
 nuget FSharp.Data
-nuget Microsoft.AspNet.WebApi.Client
+nuget FSharp.Configuration
 nuget Microsoft.AspNet.WebApi.SelfHost
+nuget Microsoft.AspNet.WebApi.WebHost
 nuget PowerPack

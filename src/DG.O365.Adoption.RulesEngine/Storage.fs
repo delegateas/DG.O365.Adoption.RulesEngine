@@ -8,23 +8,39 @@ module Storage =
   open Microsoft.WindowsAzure.Storage.Queue
   open Newtonsoft.Json
   open FSharp.Data
+  open FSharp.Data.HttpRequestHeaders
   open Config
   open Model
 
   let fetchAccount =
-    let conn = appconfig.Item("AzureConnectionString")
+    let conn = Settings.AzureConnectionString
     CloudStorageAccount.Parse conn
+
 
   let fetchNotificationQueue =
     let account = fetchAccount
     let queueClient = account.CreateCloudQueueClient()
     queueClient.GetQueueReference("notification-queue")
 
+
   let fromAuditTable user q =
     let account = fetchAccount
     let tableClient = account.CreateCloudTableClient()
     let tableName = "Audit" + user
-    fromTable tableClient tableName q
+    let table = tableClient.GetTableReference(tableName)
+    table.ExecuteQuery(q)
+    |> Seq.map (fun e ->
+                 { Date = e.PartitionKey;
+                   Id = e.RowKey;
+                   ServiceType = e.Item("ServiceType").ToString();
+                   Operation = e.Item("Operation").ToString();
+                   Status = e.Item("Result").ToString();
+                   Time = e.Item("Time").ToString();
+                   ObjectId = e.Item("ObjectId").ToString();
+                   Json = e.Item("Json").ToString()
+                   })
+    |> Seq.toArray
+
 
   let queueNotificationToAzure (msgs :Notification[]) =
     let queue = fetchNotificationQueue
@@ -37,3 +53,11 @@ module Storage =
                     let json = JsonConvert.SerializeObject(u)
                     let msg = new CloudQueueMessage(json)
                     queue.AddMessage(msg, n))
+
+
+  let postNotification (n :Notification) =
+    let _ = Http.Request(Settings.NotificationUri.ToString(), 
+                         httpMethod = "POST",
+                         headers = [ ContentType "application/json" ],
+                         body = TextRequest (JsonConvert.SerializeObject n))
+    ()
