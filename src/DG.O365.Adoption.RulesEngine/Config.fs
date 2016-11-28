@@ -1,12 +1,12 @@
 namespace DG.O365.Adoption.RulesEngine
 
+[<AutoOpen>]
 module Config =
   open System
   open FSharp.Configuration
 
   type Settings = AppSettings<"app.config">
   let private ACS = "AzureConnectionString"
-  let private PORT = "Port"
   let private NURI = "NotificationUri"
   let private INTRVL = "TimerJobInterval"
 
@@ -18,8 +18,6 @@ module Config =
 
   Settings.AzureConnectionString <- 
     if env.ContainsKey(ACS) then env.Item(ACS) else Settings.AzureConnectionString
-  Settings.Port <- 
-    if env.ContainsKey(PORT) then Int32.Parse(env.Item(PORT)) else Settings.Port
   Settings.NotificationUri <- 
     if env.ContainsKey(NURI) then new Uri(env.Item(NURI)) else Settings.NotificationUri
   Settings.TimerJobInterval <- 

@@ -10,7 +10,12 @@ module Main =
 
   [<EntryPoint>]
   let main args =
-    let baseUri = sprintf "%s%i" "http://localhost:" Settings.Port
+    let port =
+      match args with
+      | [|inport|] -> Int32.Parse(inport)
+      | _ -> failwith "There can only be one argument (Port)."
+
+    let baseUri = sprintf "%s%i" "http://localhost:" port 
     let config = new HttpSelfHostConfiguration(baseUri)
     config |> register [ testRuleResource ]
 
