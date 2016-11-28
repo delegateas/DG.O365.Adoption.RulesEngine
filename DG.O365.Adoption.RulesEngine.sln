@@ -3,10 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DG.O365.Adoption.RulesEngine", "src\DG.O365.Adoption.RulesEngine\DG.O365.Adoption.RulesEngine.fsproj", "{EDED36FB-C1D2-4008-901C-2563793E52E8}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DG.O365.Adoption.RulesEngine", "DG.O365.Adoption.RulesEngine\DG.O365.Adoption.RulesEngine.fsproj", "{EDED36FB-C1D2-4008-901C-2563793E52E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B89F2CB-9C5E-4090-A11E-8C0F7AA3F701}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0D7B5290-0CEC-4C4D-A361-A11ED897B359}"
 	ProjectSection(SolutionItems) = preProject
+		.deployment = .deployment
 		build.cmd = build.cmd
 		build.fsx = build.fsx
 		build.sh = build.sh

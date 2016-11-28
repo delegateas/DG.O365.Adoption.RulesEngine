@@ -1,10 +1,7 @@
 source https://www.nuget.org/api/v2
 nuget FAKE
-nuget Frank
+nuget Suave
 nuget FSharp.Azure.Storage
 nuget FSharp.Core
 nuget FSharp.Data
 nuget FSharp.Configuration
-nuget Microsoft.AspNet.WebApi.SelfHost
-nuget Microsoft.AspNet.WebApi.WebHost
-nuget PowerPack

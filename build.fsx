@@ -1,42 +1,40 @@
 // include Fake libs
 #r "./packages/FAKE/tools/FakeLib.dll"
+#r @"FakeLib.dll"
 
 open Fake
+open Fake.Azure
+open System
+open System.IO
 
-// Directories
-let buildDir  = "./build/"
-let deployDir = "./deploy/"
+Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
+let solutionFile = "DG.O365.Adoption.RulesEngine\DG.O365.Adoption.RulesEngine.fsproj"
 
+Target "StageWebsiteAssets" (fun _ ->
+    let blacklist =
+        [ "typings"
+          ".fs"
+          ".references"
+          "tsconfig.json" ]
+    let shouldInclude (file:string) =
+        blacklist
+        |> Seq.forall(not << file.Contains)
+    Kudu.stageFolder (Path.GetFullPath @"DG.O365.Adoption.RulesEngine\WebHost") shouldInclude)
 
-// Filesets
-let appReferences  =
-    !! "/**/*.csproj"
-    ++ "/**/*.fsproj"
+Target "BuildSolution" (fun _ ->
+    solutionFile
+    |> MSBuildHelper.build (fun defaults ->
+        { defaults with
+            Verbosity = Some Minimal
+            Targets = [ "Build" ]
+            Properties = [ "Configuration", "Release"
+                           "OutputPath", Kudu.deploymentTemp ] })
+    |> ignore)
 
-// version info
-let version = "0.1"  // or retrieve from CI server
+Target "Deploy" Kudu.kuduSync
 
-// Targets
-Target "Clean" (fun _ ->
-    CleanDirs [buildDir; deployDir]
-)
+"StageWebsiteAssets"
+==> "BuildSolution"
+==> "Deploy"
 
-Target "Build" (fun _ ->
-    // compile all projects below src/app/
-    MSBuildDebug buildDir "Build" appReferences
-    |> Log "AppBuild-Output: "
-)
-
-Target "Deploy" (fun _ ->
-    !! (buildDir + "/**/*.*")
-    -- "*.zip"
-    |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip")
-)
-
-// Build order
-"Clean"
-  ==> "Build"
-  ==> "Deploy"
-
-// start build
-RunTargetOrDefault "Build"
+RunTargetOrDefault "Deploy"
