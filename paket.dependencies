@@ -2,6 +2,6 @@ source https://www.nuget.org/api/v2
 nuget FAKE
 nuget Suave
 nuget FSharp.Azure.Storage
-nuget FSharp.Core
 nuget FSharp.Data
+nuget SQLProvider
 nuget FSharp.Configuration

@@ -1,5 +1,5 @@
-FSharp.Core
+FSharp.Data
+SQLProvider
 Suave
 FSharp.Azure.Storage
 FSharp.Configuration
-FSharp.Data

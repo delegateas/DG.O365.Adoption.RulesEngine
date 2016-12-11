@@ -1,6 +1,7 @@
 namespace DG.O365.Adoption.RulesEngine
 
 module Http =
+  open System.Text
   open Suave
   open Suave.Json
   open Suave.RequestErrors
@@ -11,12 +12,33 @@ module Http =
 
   open Model
   open Engine
+  open Storage
 
   let testRule (rule :RuleInvocation) =
-    handleRule rule.Rule rule.ForUser rule.ToUser
-    "Rule dispatched."
+    match handleRule rule.Rule rule.ForUser rule.ToUser with
+      | Result.Success s -> ACCEPTED ""
+      | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
 
-  let testRuleHandler :WebPart =
-    path "/api/testrule" >=> choose [
-      POST >=> request (fun r -> OK (testRule (fromJson r.rawForm))) ;
-      NOT_FOUND "Found no handlers" ]
+
+  let postRule (rule :Rule) =
+    match addRule rule (Storage.sql.GetDataContext()) with
+      | Result.Success _ -> CREATED ""
+      | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
+
+
+  let getRules =
+    match getAllRules (Storage.sql.GetDataContext()) with
+      | Result.Success s -> OK (Encoding.UTF8.GetString(toJson (s |> Seq.toArray)))
+      | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
+
+
+  let app :WebPart =
+    choose [
+      path "/api/testrule" >=> 
+        POST >=> request (fun r -> (testRule (fromJson r.rawForm)))
+      path "/api/rules" >=> choose [
+        GET >=> getRules; 
+        POST >=> request (fun r -> (postRule (fromJson r.rawForm))) ; 
+        DELETE >=> METHOD_NOT_ALLOWED "Not Yet Implemented" ]
+      NOT_FOUND "Found no handlers" 
+    ]
