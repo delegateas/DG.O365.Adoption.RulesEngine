@@ -71,7 +71,7 @@ module Storage =
     let account = fetchAccount
     let tableClient = account.CreateCloudTableClient()
     tableClient.ListTables()
-    |> Seq.filter (fun t -> t.Name.StartsWith("Audit")) 
+    |> Seq.filter (fun t -> t.Name.StartsWith("Audit"))
     |> Seq.toList
 
 
@@ -103,8 +103,8 @@ module Storage =
 
 
   let writeNotificationToAzure (notification :SentNotification) =
-    let write (msg :SentNotification) = 
-      let inSentTable, _ = fetchNotificationTable 
+    let write (msg :SentNotification) =
+      let inSentTable, _ = fetchNotificationTable
       msg |> Insert |> inSentTable
     notification |> tryCatch write
 
@@ -112,7 +112,7 @@ module Storage =
   let notificationExists (notification :SentNotification) =
 
     let fromSentNotifications (n :SentNotification) =
-      let _, fromSentTable = fetchNotificationTable 
+      let _, fromSentTable = fetchNotificationTable
       Query.all<SentNotification>
       |> Query.where <@ fun g s -> s.PartitionKey = n.UserId && g.RuleName = n.RuleName @>
       |> fromSentTable
@@ -139,7 +139,7 @@ module Storage =
 
   let postNotification (n :Notification) =
     let io n =
-      let _ = Http.Request(Settings.NotificationUri.ToString(), 
+      let _ = Http.Request(Settings.NotificationUri.ToString(),
                            httpMethod = "POST",
                            headers = [ ContentType "application/json" ],
                            body = TextRequest (JsonConvert.SerializeObject n))

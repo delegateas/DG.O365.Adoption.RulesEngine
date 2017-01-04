@@ -1,14 +1,18 @@
-// include Fake libs
+﻿// include Fake libs
 #r "./packages/FAKE/tools/FakeLib.dll"
 #r @"FakeLib.dll"
 
 open Fake
 open Fake.Azure
+open Fake.EnvironmentHelper
+open Fake.StringHelper
+open Fake.ConfigurationHelper
 open System
 open System.IO
 
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 let solutionFile = "DG.O365.Adoption.RulesEngine\DG.O365.Adoption.RulesEngine.fsproj"
+let sqlConn = environVar "RulesSqlConnectionString"
 
 Target "StageWebsiteAssets" (fun _ ->
     let blacklist =
@@ -22,6 +26,8 @@ Target "StageWebsiteAssets" (fun _ ->
     Kudu.stageFolder (Path.GetFullPath @"DG.O365.Adoption.RulesEngine\WebHost") shouldInclude)
 
 Target "BuildSolution" (fun _ ->
+    updateConnectionString "SqlConnectionString" sqlConn "DG.O365.Adoption.RulesEngine\App.config"
+
     solutionFile
     |> MSBuildHelper.build (fun defaults ->
         { defaults with
