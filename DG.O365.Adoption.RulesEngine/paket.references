@@ -3,3 +3,4 @@ SQLProvider
 Suave
 FSharp.Azure.Storage
 FSharp.Configuration
+Yaaf.FSharp.Scripting

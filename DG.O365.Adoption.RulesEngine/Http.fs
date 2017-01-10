@@ -10,13 +10,12 @@ module Http =
   open Suave.Filters
   open Suave.Successful
 
-  open Model
   open Engine
   open Storage
 
   let testRule (rule :RuleInvocation) =
     match handleRule rule.Rule rule.ForUser rule.ToUser with
-      | Result.Success s -> ACCEPTED ""
+      | Result.Success s -> ACCEPTED s
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
 
 
@@ -34,11 +33,11 @@ module Http =
 
   let app :WebPart =
     choose [
-      path "/api/testrule" >=> 
+      path "/api/testrule" >=>
         POST >=> request (fun r -> (testRule (fromJson r.rawForm)))
       path "/api/rules" >=> choose [
-        GET >=> getRules; 
-        POST >=> request (fun r -> (postRule (fromJson r.rawForm))) ; 
+        GET >=> getRules;
+        POST >=> request (fun r -> (postRule (fromJson r.rawForm))) ;
         DELETE >=> METHOD_NOT_ALLOWED "Not Yet Implemented" ]
-      NOT_FOUND "Found no handlers" 
+      NOT_FOUND "Found no handlers"
     ]

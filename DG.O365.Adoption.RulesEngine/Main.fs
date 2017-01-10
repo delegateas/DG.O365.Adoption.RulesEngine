@@ -14,7 +14,7 @@ module Main =
     let logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Info
     let serverConfig =
       { Web.defaultConfig with
-          logger = logger 
+          logger = logger
           bindings = [ HttpBinding.mk HTTP ip port ] }
 
     log logger "App" LogLevel.Info (sprintf "Job running every %ims ..."

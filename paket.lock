@@ -4,6 +4,7 @@ NUGET
     FSharp.Azure.Storage (2.1)
       FSPowerPack.Linq.Community (>= 3.0)
       WindowsAzure.Storage (>= 3.1.0.1)
+    FSharp.Compiler.Service (2.0.0.6)
     FSharp.Configuration (0.6.4)
     FSharp.Core (4.0.0.1)
     FSharp.Data (2.3.2)
@@ -581,4 +582,7 @@ NUGET
       Newtonsoft.Json (>= 6.0.8) - framework: >= net40, winv4.5, wpv8.0, wpav8.1
       Newtonsoft.Json (>= 9.0.1) - framework: >= netstandard13
       System.Spatial (>= 5.6.4) - framework: >= netstandard13
+    Yaaf.FSharp.Scripting (1.7.1)
+      FSharp.Compiler.Service (>= 2.0.0.6)
+      FSharp.Core (>= 4.0.0.1)
     Zlib.Portable (1.11) - framework: >= netstandard11, portable-net45+sl5+win8, portable-net45+win8, portable-net45+win8+wp8+wpa81

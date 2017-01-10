@@ -79,10 +79,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Compiler.Service">
+      <HintPath>..\packages\FSharp.Compiler.Service\lib\net40\FSharp.Compiler.Service.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="Yaaf.FSharp.Scripting">
+      <HintPath>..\packages\Yaaf.FSharp.Scripting\lib\net45\Yaaf.FSharp.Scripting.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

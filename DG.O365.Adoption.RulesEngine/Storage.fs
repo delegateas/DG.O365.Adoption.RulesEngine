@@ -13,7 +13,6 @@ module Storage =
   open FSharp.Data.Sql
 
   open Config
-  open Model
   open Result
 
   let fetchAccount =

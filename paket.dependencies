@@ -5,3 +5,5 @@ nuget FSharp.Azure.Storage
 nuget FSharp.Data
 nuget SQLProvider
 nuget FSharp.Configuration
+nuget FSharp.Compiler.Service == 2.0.0.6
+nuget Yaaf.FSharp.Scripting

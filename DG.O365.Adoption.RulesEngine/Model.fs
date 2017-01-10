@@ -1,6 +1,5 @@
 namespace DG.O365.Adoption.RulesEngine
 
-module Model =
   open System
   open System.Runtime.Serialization
   open FSharp.Azure.Storage.Table
@@ -55,6 +54,6 @@ module Model =
       UserId :UserId
       [<RowKey>]
       [<field: DataMember(Name = "timeSent")>]
-      TimeSent :string 
+      TimeSent :string
       [<field: DataMember(Name = "ruleName")>]
       RuleName :string }
