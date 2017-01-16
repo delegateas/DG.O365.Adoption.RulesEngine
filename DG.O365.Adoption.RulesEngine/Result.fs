@@ -2,7 +2,7 @@
 
 module Result =
 
-  type Result<'TSuccess,'TFailure> = 
+  type Result<'TSuccess,'TFailure> =
     | Success of 'TSuccess
     | Failure of 'TFailure
 
@@ -10,12 +10,12 @@ module Result =
   let bind f =
     fun m ->
       match m with
-        | Success s -> f s  
+        | Success s -> f s
         | Failure f -> Failure f
 
 
-  let (>>=) bind f = 
-    bind f 
+  let (>>=) bind f =
+    bind f
 
 
   type Error = string[]
@@ -30,10 +30,9 @@ module Result =
 
   let lift f1 f2 x =
     match f1 x with
-      | Success s -> f2 x
+      | Success s -> f2 s
       | Failure f -> Failure f
 
 
   let (>=>) f1 f2 x =
     lift f1 f2 x
- 

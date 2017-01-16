@@ -121,19 +121,17 @@ module Storage =
       | Failure f -> true // In case of communication failure, assume it is there
 
 
-  let pushToAzureStorageQueue (msgs :Notification[]) =
+  let pushToAzureStorageQueue (notification :Notification) =
     let io msg =
       let queue = fetchNotificationQueue
       let _ = queue.CreateIfNotExists()
       // Azure Cloud Queue TTL cannot exceed 7 days
       let max = new TimeSpan(7, 0, 0, 0)
-      msgs
-      |> Array.iter (fun u ->
-                      let n = new Nullable<TimeSpan>(max)
-                      let json = JsonConvert.SerializeObject(u)
-                      let msg = new CloudQueueMessage(json)
-                      queue.AddMessage(msg, n))
-    msgs |> tryCatch io
+      let n = new Nullable<TimeSpan>(max)
+      let json = JsonConvert.SerializeObject(msg)
+      let m = new CloudQueueMessage(json)
+      queue.AddMessage(m, n)
+    notification |> tryCatch io
 
 
   let postNotification (n :Notification) =

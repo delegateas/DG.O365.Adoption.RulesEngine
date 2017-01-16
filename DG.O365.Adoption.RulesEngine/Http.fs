@@ -14,7 +14,7 @@ module Http =
   open Storage
 
   let testRule (rule :RuleInvocation) =
-    match handleRule rule.Rule rule.ForUser rule.ToUser with
+    match handleTestRule rule.ToUser  rule.ForUser rule.Rule with
       | Result.Success s -> ACCEPTED s
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
 

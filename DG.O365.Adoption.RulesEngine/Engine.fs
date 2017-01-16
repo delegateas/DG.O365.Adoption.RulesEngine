@@ -6,6 +6,7 @@ module Engine =
   open Microsoft.WindowsAzure.Storage.Table
   open Microsoft.FSharp.Compiler.SourceCodeServices
   open FSharp.Azure.Storage.Table
+  open FSharp.Data
   open Yaaf.FSharp.Scripting
   open Suave.Log
   open Suave.Logging
@@ -15,13 +16,30 @@ module Engine =
   [<Literal>]
   let Script_Input = "input"
 
+  let (|Prefixed|_|) (p:string) (s:string) =
+    if s.StartsWith(p) then
+        Some(s)
+    else
+        None
+
   let queryRuleWorkingSet r (user :string) =
     let u = user.Split [|'@'|] |> Seq.head
     let q = (new TableQuery()).Where(r.Query)
     fromAuditTable u q
 
 
-  let execF script set =
+  let fetchScript url :Result<string, Error> =
+    let resp =
+      Http.Request(url, httpMethod = "GET");
+    match resp.StatusCode with
+    | 200 -> match resp.Body with
+             | Text t -> Success (t)
+             | _ -> Failure ([|"Script file empty."|])
+    | _ -> Failure ([|sprintf "Rule Engine could not reach script at %s" url
+                      sprintf "%i: %A" resp.StatusCode resp.Body|])
+
+
+  let execF set script :Result<bool, Error> =
     let fsi = ScriptHost.CreateNew()
     let inject = sprintf "let input = %A\r\n" set
     let cmd = inject + script
@@ -32,43 +50,48 @@ module Engine =
     | Result r -> Success (r)
 
 
-  let evalRule r set =
+  let evalRule r set :Result<bool, Error> =
     match r.Reducer with
+    | Prefixed "https://" url  -> fetchScript >=> execF set <| url
+    | Prefixed "http://" url -> fetchScript >=> execF set <| url
     | "" -> Success (Array.isEmpty set)
-    | _ -> execF r.Reducer set
+    | _ -> execF set r.Reducer
 
 
   // Process rule `forUser`, and if triggered, send a notification `toUser`.
   // In practice, `forUser` and `toUser` should be the same, but that is left
   // up to the caller in order to allow for debugging scenarios.
-  let handleRule (r :Rule)  (forUser :string)  (toUser :string) =
+  // `io` is the side effect to perform when the rule returns true.
+  let handleRule io (toUser :string)  (forUser :string) (r :Rule) =
     let notification = { DocumentationLink = r.DocumentationLink;
                          UserId = toUser;
                          Message = r.Message }
     let items = queryRuleWorkingSet r forUser
-
-    match items with
-      | Success ae ->
-        match evalRule r ae with
-          | Success b ->
-             match b with
-               | true ->
+    match queryRuleWorkingSet r >=> evalRule r <| forUser with
+    | Success b ->
+        match b with
+        | true ->
                   let sent = { UserId = toUser;
                                TimeSent = DateTime.UtcNow.ToString("s")
                                RuleName = r.Name }
                   if (not (notificationExists sent))
                     then (match writeNotificationToAzure sent with
                          | Success s ->
-                            match pushToAzureStorageQueue [|notification|] with
+                            match io notification with
                             | Success _ ->
                               Success ("Rule triggered.")
                             | Failure f ->
                               Failure (Array.append [|"Could not persist message:"|]  f)
                          | Failure f -> Failure f)
                   else Success ("Rule triggered, but has been sent before.")
-               | false -> Success ("Rule did not trigger.")
-          | Failure e -> Failure e
-      | Failure e -> Failure e
+        | false -> Success ("Rule did not trigger.")
+    | Failure e -> Failure e
+
+
+  let handleTestRule = handleRule postNotification
+
+
+  let handleRuleJob = handleRule pushToAzureStorageQueue
 
 
   let doJob logger =
@@ -84,7 +107,7 @@ module Engine =
     let errors =
       [for rule in rules do
           for user in listUsers do
-            yield handleRule rule user user]
+            yield handleRuleJob user user rule]
       |> Seq.choose (fun r ->
                        match r with
                        | Failure f -> Some f
