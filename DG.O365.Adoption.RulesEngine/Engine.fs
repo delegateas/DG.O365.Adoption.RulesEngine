@@ -2,10 +2,7 @@ namespace DG.O365.Adoption.RulesEngine
 
 module Engine =
   open System
-  open System.Runtime.Serialization
   open Microsoft.WindowsAzure.Storage.Table
-  open Microsoft.FSharp.Compiler.SourceCodeServices
-  open FSharp.Azure.Storage.Table
   open FSharp.Data
   open Yaaf.FSharp.Scripting
   open Suave.Log
@@ -39,15 +36,20 @@ module Engine =
                       sprintf "%i: %A" resp.StatusCode resp.Body|])
 
 
+  let evalExpressionTyped<'T> (fsi :IFsiSession) text =
+    let box (session :IFsiSession) t =
+      match session.EvalExpression(t) with
+      | (value :'T) -> value |> Success
+
+    match tryCatch (box fsi) text with
+    | Success s -> s
+    | Failure f -> Failure f
+
+
   let execF set script :Result<bool, Error> =
     let fsi = ScriptHost.CreateNew()
-    let inject = sprintf "let input = %A\r\n" set
-    let cmd = inject + script
-    match fsi.Handle<bool> fsi.EvalExpression cmd with
-    | InvalidExpressionType e ->
-      Failure [|(sprintf "Expected type bool but got %A" e.Value)|]
-    | InvalidCode e -> Failure [|e.Result.ToString()|]
-    | Result r -> Success (r)
+    fsi.EvalInteraction script
+    evalExpressionTyped<bool> fsi (sprintf "rule %A\r\n" set)
 
 
   let evalRule r set :Result<bool, Error> =
@@ -66,7 +68,6 @@ module Engine =
     let notification = { DocumentationLink = r.DocumentationLink;
                          UserId = toUser;
                          Message = r.Message }
-    let items = queryRuleWorkingSet r forUser
     match queryRuleWorkingSet r >=> evalRule r <| forUser with
     | Success b ->
         match b with

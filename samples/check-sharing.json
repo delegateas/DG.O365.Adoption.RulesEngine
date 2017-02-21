@@ -1,0 +1,7 @@
+{
+  "message": "I can see that you have not used the Sharing feature in SharePoint Online. Sharing makes collaborating with your colleagues and managing permissions to your content much easier.",
+  "documentationLink": "https://support.office.com/en-us/article/Share-a-document-using-SharePoint-or-OneDrive-807de6cf-1ece-41b9-a2b3-250d9a48f1e8?ui=en-US&rs=en-US&ad=US",
+  "query": "Operation eq 'SharingSet'",
+  "reducer": "let rule input = Array.isEmpty input",
+  "name": "check-sharing"
+}
