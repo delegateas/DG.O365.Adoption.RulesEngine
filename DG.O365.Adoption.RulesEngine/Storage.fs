@@ -5,6 +5,8 @@ module Storage =
   open Microsoft.WindowsAzure.Storage
   open Microsoft.WindowsAzure.Storage.Queue
   open Microsoft.WindowsAzure.Storage.Table
+  open System.Linq
+  open Microsoft.FSharp.Linq
   open Newtonsoft.Json
   open FSharp.Data
   open FSharp.Configuration
@@ -41,6 +43,25 @@ module Storage =
       ctx.SubmitUpdates()
     db |> tryCatch io
 
+
+  let deleteRule (rule :Rule) db =
+    let io (ctx :sql.dataContext) =
+     let deletingRule=ctx.Dbo.Rules |> Seq.find(fun x ->x.Name.Equals(rule.Name))
+     deletingRule.Delete()
+     ctx.SubmitUpdates()
+    db |> tryCatch io
+
+
+  let updateRule (rule :Rule) db =
+    let io (ctx :sql.dataContext) =
+     let originalRule=ctx.Dbo.Rules |> Seq.find(fun x ->x.Name.Equals(rule.Name))
+     originalRule.DocumentationLink <- rule.DocumentationLink
+     originalRule.Query <- rule.Query
+     originalRule.Reducer <- rule.Reducer
+     originalRule.Message <- rule.Message
+     ctx.SubmitUpdates()
+    db |> tryCatch io
+        
 
   let getAllRules db =
     let io (ctx :sql.dataContext) =
