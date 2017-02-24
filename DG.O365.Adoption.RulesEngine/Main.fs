@@ -1,11 +1,11 @@
 namespace DG.O365.Adoption.RulesEngine
 
 module Main =
+  open System.IO
   open Suave
   open Suave.Log
   open Suave.Logging
   open Http
-  open Engine
 
   [<EntryPoint>]
   let main args =
@@ -14,6 +14,7 @@ module Main =
     let logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Info
     let serverConfig =
       { Web.defaultConfig with
+          homeFolder = Some (Path.GetFullPath "./static")
           logger = logger
           bindings = [ HttpBinding.mk HTTP ip port ] }
 
