@@ -20,25 +20,27 @@ module Http =
 
 
   let postRule (rule :Rule) =
-    match addRule rule (Storage.sql.GetDataContext()) with
+    match addRule rule with
       | Result.Success _ -> CREATED ""
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
 
 
   let getRules =
-    match getAllRules (Storage.sql.GetDataContext()) with
+    match getAllRules with
       | Result.Success s -> OK (Encoding.UTF8.GetString(toJson (s |> Seq.toArray)))
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
 
 
-  let deleteRule (rule : Rule )=
-    match deleteRule  rule (Storage.sql.GetDataContext()) with
-      | Result.Success s -> OK ""
-      | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
-
+  let deleteHandler (rule :Choice<string,string>)=
+     match rule with
+     | Choice1Of2 s -> 
+       match deleteRule s with
+       | Result.Success _ -> OK ""
+       | Result.Failure f -> BAD_REQUEST ""
+     | Choice2Of2 _ -> BAD_REQUEST "Query parameter 'Name' not found."
 
   let updateRule (rule : Rule )=
-    match updateRule  rule (Storage.sql.GetDataContext()) with
+    match updateRule  rule  with
       | Result.Success s -> OK ""
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
 
@@ -52,7 +54,7 @@ module Http =
         GET >=> getRules;
         POST >=> request (fun r -> (postRule (fromJson r.rawForm))) ;
         PUT >=> request (fun r -> (updateRule (fromJson r.rawForm))) ;
-        DELETE >=> request (fun r -> (deleteRule (fromJson r.rawForm))) ; ]
+        DELETE >=> request (fun r -> (deleteHandler (r.queryParam "name"))) ]
       GET >=> Files.browseHome
       NOT_FOUND "Found no handlers"
     ]

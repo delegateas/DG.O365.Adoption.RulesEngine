@@ -32,7 +32,7 @@ module Storage =
      CaseSensitivityChange = Common.CaseSensitivityChange.ORIGINAL>
 
 
-  let addRule (rule :Rule) db =
+  let addRule (rule :Rule)=
     let io (ctx :sql.dataContext) =
       let row = ctx.Dbo.Rules.Create()
       row.Name <- rule.Name
@@ -41,18 +41,18 @@ module Storage =
       row.Reducer <- rule.Reducer
       row.Message <- rule.Message
       ctx.SubmitUpdates()
-    db |> tryCatch io
+    sql.GetDataContext() |>tryCatch io
 
 
-  let deleteRule (rule :Rule) db =
+  let deleteRule (ruleName :string) =
     let io (ctx :sql.dataContext) =
-     let deletingRule=ctx.Dbo.Rules |> Seq.find(fun x ->x.Name.Equals(rule.Name))
+     let deletingRule=ctx.Dbo.Rules |> Seq.find(fun x ->x.Name.Equals(ruleName))
      deletingRule.Delete()
      ctx.SubmitUpdates()
-    db |> tryCatch io
+    sql.GetDataContext() |> tryCatch io
 
 
-  let updateRule (rule :Rule) db =
+  let updateRule (rule :Rule) =
     let io (ctx :sql.dataContext) =
      let originalRule=ctx.Dbo.Rules |> Seq.find(fun x ->x.Name.Equals(rule.Name))
      originalRule.DocumentationLink <- rule.DocumentationLink
@@ -60,14 +60,15 @@ module Storage =
      originalRule.Reducer <- rule.Reducer
      originalRule.Message <- rule.Message
      ctx.SubmitUpdates()
-    db |> tryCatch io
+    sql.GetDataContext() |> tryCatch io
         
 
-  let getAllRules db =
+  let getAllRules =
     let io (ctx :sql.dataContext) =
       query { for row in ctx.Dbo.Rules do
-              select row} |> Seq.map (fun x -> x.MapTo<Rule>())
-    db |> tryCatch io
+              select row }
+        |> Seq.map (fun x -> x.MapTo<Rule>())
+    sql.GetDataContext() |> tryCatch io
 
 
   let fetchNotificationQueue =

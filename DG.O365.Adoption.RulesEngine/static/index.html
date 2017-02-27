@@ -1,12 +1,111 @@
-<!doctype html>
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
 
-<html lang="en">
-<head>
-  <meta charset="utf-8">
+    <title>Rule Engine Administration</title>
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+<body ng-app="ruleApp" ng-controller="ruleCtrl">
+    <div class="col-md-12">
+        <h1>Rule Administration</h1>
+        <uif-button uif-type="command">
+            <uif-icon uif-type="plus"></uif-icon>
+            Click Me!
+        </uif-button>
 
-<body>
-  <span>Hello!</span>
-  <script src="script.js"></script>
+        <button class="btn-info" ng-click="open()"><span class="glyphicon glyphicon-plus"></span>Add Rule</button>
+        <uif-table>
+            <uif-table-head>
+                <uif-table-row>
+                    <uif-table-row-select></uif-table-row-select>
+                    <uif-table-header>Name</uif-table-header>
+                    <uif-table-header>Link</uif-table-header>
+                    <uif-table-header>Message</uif-table-header>
+                    <uif-table-header>Query</uif-table-header>
+                    <uif-table-header>Reducer</uif-table-header>
+                </uif-table-row>
+            </uif-table-head>
+            <uif-table-body>
+                <uif-table-row ng-repeat="r in rules">                   
+                    <uif-table-cell></uif-table-cell>
+                    <uif-table-cell></uif-table-cell>
+                    <uif-table-cell></uif-table-cell>
+                    <uif-table-cell></uif-table-cell>
+                    <uif-table-cell></uif-table-cell>
+                </uif-table-row>
+            </uif-table-body>
+        </uif-table>
+        <table style="width:100%" class="table" ng-show="isOpen">
+            <tbody>
+                <tr>
+                    <th style="width:10%">Name</th>
+                    <td><input required style="width:100%" ng-model="newRule.name" value="{{newRule.name}}"></td>
+                </tr>
+                <tr>
+                    <th>Link</th>
+                    <td><input required style="width:100%" ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}"></td>
+                </tr>
+                <tr>
+                    <th>Message</th>
+                    <td><input required style="width:100%" ng-model="newRule.message" value="{{newRule.message}}"></td>
+                </tr>
+                <tr>
+                    <th>Query</th>
+                    <td><input required style="width:100%" ng-model="newRule.query" value="{{newRule.query}}"></td>
+                </tr>
+                <tr>
+                    <th>Reducer</th>
+                    <td><input required style="width:100%" ng-model="newRule.reducer" value="{{newRule.reducer}}"></td>
+                </tr>
+                <tr><th></th>
+                    <td ><button class="btn-info pull-right" ng-click="cancel()">Cancel</button>
+                    <button ng-show="!editmode" class="btn-info pull-right " ng-click="create(newRule)">Create</button>
+                    <button ng-show="editmode" class="btn-info pull-right" ng-click="edit(newRule)">Edit</button>
+                   </td>
+               </tr>
+            </tbody>
+        </table>
+        <table ng-show="!editmode" style="width:100%" class="table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Link</th>
+                    <th>Message</th>
+                    <th>Query</th>
+                    <th>Reducer</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="r in rules">
+                <tr>
+                    <td ng-show="!editmode">{{r.name}}</td>
+                    <td ng-show="!editmode"><a href="{{r.documentationLink}}">{{r.documentationLink}}</a></td>
+                    <td ng-show="!editmode">{{r.message}}</td>
+                    <td ng-show="!editmode">{{r.query}}</td>
+                    <td ng-show="!editmode">{{r.reducer}}</td>
+                    <td>
+                        <button class="btn-info pull-left" ng-click="toEditmode(r)"><span class="glyphicon glyphicon-edit"></span></button>
+                        <button class="btn-danger" ng-click="delete(r)"><span class="glyphicon glyphicon-trash" style="color:white"></span></button>
+                    </td>
+                </tr>           
+            </tbody>
+
+
+        </table>
+    </div>
+
+    <div class="container footer ">
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.js"></script>
+    <script src="script.js"></script>
+    <script src="tscript.js"></script>
+
 </body>
 </html>
