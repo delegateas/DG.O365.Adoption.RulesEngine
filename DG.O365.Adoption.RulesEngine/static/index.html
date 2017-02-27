@@ -4,42 +4,17 @@
     <meta charset="UTF-8">
 
     <title>Rule Engine Administration</title>
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body ng-app="ruleApp" ng-controller="ruleCtrl">
     <div class="col-md-12">
         <h1>Rule Administration</h1>
-        <uif-button uif-type="command">
-            <uif-icon uif-type="plus"></uif-icon>
-            Click Me!
-        </uif-button>
-
         <button class="btn-info" ng-click="open()"><span class="glyphicon glyphicon-plus"></span>Add Rule</button>
-        <uif-table>
-            <uif-table-head>
-                <uif-table-row>
-                    <uif-table-row-select></uif-table-row-select>
-                    <uif-table-header>Name</uif-table-header>
-                    <uif-table-header>Link</uif-table-header>
-                    <uif-table-header>Message</uif-table-header>
-                    <uif-table-header>Query</uif-table-header>
-                    <uif-table-header>Reducer</uif-table-header>
-                </uif-table-row>
-            </uif-table-head>
-            <uif-table-body>
-                <uif-table-row ng-repeat="r in rules">                   
-                    <uif-table-cell></uif-table-cell>
-                    <uif-table-cell></uif-table-cell>
-                    <uif-table-cell></uif-table-cell>
-                    <uif-table-cell></uif-table-cell>
-                    <uif-table-cell></uif-table-cell>
-                </uif-table-row>
-            </uif-table-body>
-        </uif-table>
+  
         <table style="width:100%" class="table" ng-show="isOpen">
             <tbody>
                 <tr>
@@ -103,9 +78,8 @@
 
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.js"></script>-->
     <script src="script.js"></script>
-    <script src="tscript.js"></script>
-
+    
 </body>
 </html>
