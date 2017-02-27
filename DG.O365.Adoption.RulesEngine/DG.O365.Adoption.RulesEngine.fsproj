@@ -13,7 +13,6 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <Name>DG.O365.Adoption.RulesEngine</Name>
-    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
     <UseIISExpress>true</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -66,11 +65,6 @@
        <Target Name="AfterBuild">
        </Target>
   -->
-  <Target Name="BeforeBuild">
-    <Exec Command="for /f &quot;delims=*&quot; %%A in ('dir *.ts /s /b') do echo &quot;%%A&quot; &gt;&gt; tsFiles.txt" />
-    <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\$(TypeScriptToolsVersion)\tsc&quot; @tsFiles.txt --sourcemap" />
-    <Exec Command="del tsFiles.txt" />
-  </Target>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties Guid="{349c5851-65df-11da-9384-00065b846f21}">

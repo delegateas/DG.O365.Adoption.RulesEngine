@@ -1,0 +1,15 @@
+{
+  "name": "dg.adoptionruleengine",
+  "version": "1.0.0",
+  "devDependencies": {
+    "gulp": "3.9.1",
+    "typescript": "^2.0.6",
+    "gulp-typescript": "^3.1.2"
+  },
+  "dependencies": {
+    "@types/es6-shim": "^0.31.32",
+    "@types/jquery": "^2.0.33",
+    "@types/microsoft-ajax": "0.0.31"
+  }
+}
+
