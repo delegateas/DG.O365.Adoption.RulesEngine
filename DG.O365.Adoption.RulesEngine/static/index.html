@@ -4,83 +4,82 @@
     <meta charset="UTF-8">
 
     <title>Rule Engine Administration</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    
+    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.min.css">
+    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.components.min.css">
+    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/js/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.min.js"></script>
+
+
+    <script src="script.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body ng-app="ruleApp" ng-controller="ruleCtrl">
-    <div class="col-md-12">
-        <h1>Rule Administration</h1>
-        <button class="btn-info" ng-click="open()"><span class="glyphicon glyphicon-plus"></span>Add Rule</button>
-  
-        <table style="width:100%" class="table" ng-show="isOpen">
-            <tbody>
-                <tr>
-                    <th style="width:10%">Name</th>
-                    <td><input required style="width:100%" ng-model="newRule.name" value="{{newRule.name}}"></td>
-                </tr>
-                <tr>
-                    <th>Link</th>
-                    <td><input required style="width:100%" ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}"></td>
-                </tr>
-                <tr>
-                    <th>Message</th>
-                    <td><input required style="width:100%" ng-model="newRule.message" value="{{newRule.message}}"></td>
-                </tr>
-                <tr>
-                    <th>Query</th>
-                    <td><input required style="width:100%" ng-model="newRule.query" value="{{newRule.query}}"></td>
-                </tr>
-                <tr>
-                    <th>Reducer</th>
-                    <td><input required style="width:100%" ng-model="newRule.reducer" value="{{newRule.reducer}}"></td>
-                </tr>
-                <tr><th></th>
-                    <td ><button class="btn-info pull-right" ng-click="cancel()">Cancel</button>
-                    <button ng-show="!editmode" class="btn-info pull-right " ng-click="create(newRule)">Create</button>
-                    <button ng-show="editmode" class="btn-info pull-right" ng-click="edit(newRule)">Edit</button>
-                   </td>
-               </tr>
-            </tbody>
-        </table>
-        <table ng-show="!editmode" style="width:100%" class="table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Link</th>
-                    <th>Message</th>
-                    <th>Query</th>
-                    <th>Reducer</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody ng-repeat="r in rules">
-                <tr>
-                    <td ng-show="!editmode">{{r.name}}</td>
-                    <td ng-show="!editmode"><a href="{{r.documentationLink}}">{{r.documentationLink}}</a></td>
-                    <td ng-show="!editmode">{{r.message}}</td>
-                    <td ng-show="!editmode">{{r.query}}</td>
-                    <td ng-show="!editmode">{{r.reducer}}</td>
-                    <td>
-                        <button class="btn-info pull-left" ng-click="toEditmode(r)"><span class="glyphicon glyphicon-edit"></span></button>
-                        <button class="btn-danger" ng-click="delete(r)"><span class="glyphicon glyphicon-trash" style="color:white"></span></button>
-                    </td>
-                </tr>           
-            </tbody>
 
+    <div>
+        <h1 class="ms-font-su">Rule Administration</h1>
+        <uif-button ng-click="open()" uif-type="hero">
+            <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Add"></i></span>
+            Add Rule
+        </uif-button>
+        <uif-table ng-show="isOpen">
+            <uif-table-body>
+                <uif-table-row>
+                    <uif-table-header style="width:10%">Name</uif-table-header>
+                    <uif-table-cell><uif-textfield required style="width:100%" ng-model="newRule.name" value="{{newRule.name}}" /></uif-table-cell>
+                </uif-table-row>
+                <uif-table-row>
+                    <uif-table-header>Link</uif-table-header>
+                    <uif-table-cell><uif-textfield input required style="width:100%" ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}" /></uif-table-cell>
+                </uif-table-row>
+                <uif-table-row>
+                    <uif-table-header>Message</uif-table-header>
+                    <uif-table-cell><uif-textfield required style="width:100%" ng-model="newRule.message" value="{{newRule.message}}" /></uif-table-cell>
+                </uif-table-row>
+                <uif-table-row>
+                    <uif-table-header>Query</uif-table-header>
+                    <uif-table-cell><uif-textfield required style="width:100%" ng-model="newRule.query" value="{{newRule.query}}" /></uif-table-cell>
+                </uif-table-row>
+                <uif-table-row>
+                    <uif-table-header>Reducer</uif-table-header>
+                    <uif-table-cell><uif-textfield required style="width:100%" ng-model="newRule.reducer" value="{{newRule.reducer}}" /></uif-table-cell>
+                </uif-table-row>
+                <uif-table-row>
+                    <uif-table-header></uif-table-header>
+                    <uif-table-cell>
+                        <uif-button style="float:right" ng-click="cancel()">cancel</uif-button>
+                        <uif-button uif-type="primary" ng-show="!editmode" style="float:right" ng-click="create(newRule)">create</uif-button>
+                        <button ng-show="editmode" uif-type="primary" style="float:right" ng-click="edit(newRule)">edit</button>
+                    </uif-table-cell>
+                </uif-table-row>
+            </uif-table-body>
+        </uif-table>
 
-        </table>
+        <uif-table ng-show="!editmode">
+            <uif-table-head>
+                <uif-table-row>
+                    <uif-table-header>Name</uif-table-header>
+                    <uif-table-header>Link</uif-table-header>
+                    <uif-table-header>Message</uif-table-header>
+                    <uif-table-header>Query</uif-table-header>
+                    <uif-table-header>Reducer</uif-table-header>
+                    <uif-table-header></uif-table-header>
+                </uif-table-row>
+            </uif-table-head>
+            <uif-table-body>
+                <uif-table-row ng-repeat="r in rules">
+                    <uif-table-cell ng-show="!editmode">{{r.name}}</uif-table-cell>
+                    <uif-table-cell ng-show="!editmode"><a href="{{r.documentationLink}}">{{r.documentationLink}}</a><</uif-table-cell>
+                    <uif-table-cell ng-show="!editmode">{{r.message}}</uif-table-cell>
+                    <uif-table-cell ng-show="!editmode">{{r.query}}</uif-table-cell>
+                    <uif-table-cell ng-show="!editmode">{{r.reducer}}</uif-table-cell>
+                    <uif-table-cell ng-show="!editmode">
+                        <button ng-click="toEditmode(r)"><i class="ms-Icon ms-Icon--Edit" aria-hidden="true"></i></button>
+                        <button ng-click="delete(r)"><i class="ms-Icon ms-Icon--Delete"></i></button>
+                    </uif-table-cell>
+                </uif-table-row>
+            </uif-table-body>
+        </uif-table>
     </div>
-
-    <div class="container footer ">
-
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.js"></script>-->
-    <script src="script.js"></script>
-    
 </body>
 </html>

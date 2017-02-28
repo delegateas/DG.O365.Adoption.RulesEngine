@@ -72,6 +72,6 @@ module ruleengine {
         }
     }
 
-    angular.module('ruleApp', [])
+    angular.module('ruleApp', ['officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
 }

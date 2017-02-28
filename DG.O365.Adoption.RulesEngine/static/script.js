@@ -61,6 +61,6 @@ var ruleengine;
     }());
     RuleCtrl.$inject = ['$scope', '$http'];
     ruleengine.RuleCtrl = RuleCtrl;
-    angular.module('ruleApp', [])
+    angular.module('ruleApp', ['officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
 })(ruleengine || (ruleengine = {}));
