@@ -97,7 +97,7 @@ module Engine =
 
   let doJob logger =
     let ctx = sql.GetDataContext()
-    let rules = match getAllRules ctx with
+    let rules = match getAllRules  with
                 | Failure f ->
                    f
                    |> Seq.map (fun e -> log logger "App" LogLevel.Error e)
