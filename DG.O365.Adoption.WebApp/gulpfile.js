@@ -12,5 +12,5 @@ gulp.task("compile", function () {
 gulp.task("default", ['compile']);
 
 gulp.task('watch', ['default'], function () {
-    gulp.watch(['src/*.ts'], ['default']);
+    gulp.watch(['src/*.ts'], ['src/*/*.ts'], ['default']);
 });

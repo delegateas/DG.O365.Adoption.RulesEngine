@@ -22,38 +22,55 @@
             <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Add"></i></span>
             Add Rule
         </uif-button>
-        <uif-table ng-show="isOpen">
-            <uif-table-body>
-                <uif-table-row>
-                    <uif-table-header style="width:10%">Name</uif-table-header>
-                    <uif-table-cell><uif-textfield required style="width:100%" ng-model="newRule.name" value="{{newRule.name}}" /></uif-table-cell>
-                </uif-table-row>
-                <uif-table-row>
-                    <uif-table-header>Link</uif-table-header>
-                    <uif-table-cell><uif-textfield input required style="width:100%" ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}" /></uif-table-cell>
-                </uif-table-row>
-                <uif-table-row>
-                    <uif-table-header>Message</uif-table-header>
-                    <uif-table-cell><uif-textfield required style="width:100%" ng-model="newRule.message" value="{{newRule.message}}" /></uif-table-cell>
-                </uif-table-row>
-                <uif-table-row>
-                    <uif-table-header>Query</uif-table-header>
-                    <uif-table-cell><uif-textfield required style="width:100%" ng-model="newRule.query" value="{{newRule.query}}" /></uif-table-cell>
-                </uif-table-row>
-                <uif-table-row>
-                    <uif-table-header>Reducer</uif-table-header>
-                    <uif-table-cell><uif-textfield required style="width:100%" ng-model="newRule.reducer" value="{{newRule.reducer}}" /></uif-table-cell>
-                </uif-table-row>
-                <uif-table-row>
-                    <uif-table-header></uif-table-header>
-                    <uif-table-cell>
-                        <uif-button style="float:right" ng-click="cancel()">cancel</uif-button>
-                        <uif-button uif-type="primary" ng-show="!editmode" style="float:right" ng-click="create(newRule)">create</uif-button>
-                        <button ng-show="editmode" uif-type="primary" style="float:right" ng-click="edit(newRule)">edit</button>
-                    </uif-table-cell>
-                </uif-table-row>
-            </uif-table-body>
-        </uif-table>
+        <div ng-show="isOpen">
+            <div>
+                <uif-textfield uif-label="Name" ng-disabled="editmode" ng-model="newRule.name" value="{{newRule.name}}" />
+            </div>
+            <div>
+                <uif-textfield uif-label="Documentation link" ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}" />
+            </div>
+            <div>
+                <uif-textfield uif-label="Message" ng-model="newRule.message" value="{{newRule.message}}" />
+            </div>
+            <div>
+                <uif-textfield uif-label="Query" ng-model="newRule.query" value="{{newRule.query}}" />
+            </div>
+            <div>
+                <uif-textfield uif-label="Reducer" ng-model="newRule.reducer" value="{{newRule.reducer}}" />
+            </div>  <div class="ms-Grid">
+                <div class="ms-Grid-row">
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
+                        <div class="ms-Label">Groups</div>
+                        <div class="ms-CheckBox">
+                            <input tabindex="-1" style="position:absolute" value="{{isAllGroupSelected}}" type="checkbox" ng-model="isAllGroupSelected" ng-change="setAllGroupSelected()">
+                            <span class="ms-Label">All Groups</span>
+                        </div>
+                        <div ng-repeat="group in groups">
+                            <div class="ms-CheckBox">
+                                <input tabindex="-1" style="position:absolute" value="{{group.objectId}}" type="checkbox" ng-model="group.checked" ng-change="changeSelectedList(group)">
+                                <span class="ms-Label">{{group.displayName}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
+                        <div class="ms-Label">Users</div>
+                        <div ng-repeat="user in users">
+                            <div class="ms-CheckBox">
+                                <input tabindex="-1" value="{{user.objectId}}" type="checkbox" ng-model="user.checked" style="position:absolute">
+                                <span class="ms-Label">{{user.displayName}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div>
+                <uif-button style="float:right" ng-click="cancel()">cancel</uif-button>
+                <uif-button uif-type="primary" ng-show="!editmode" style="float:right" ng-click="create(newRule)">create</uif-button>
+                <uif-button ng-show="editmode" uif-type="primary" style="float:right" ng-click="edit(newRule)">edit</uif-button>
+            </div>
+        </div>
 
         <uif-table ng-show="!editmode">
             <uif-table-head>
@@ -69,7 +86,7 @@
             <uif-table-body>
                 <uif-table-row ng-repeat="r in rules">
                     <uif-table-cell ng-show="!editmode">{{r.name}}</uif-table-cell>
-                    <uif-table-cell ng-show="!editmode"><a href="{{r.documentationLink}}">{{r.documentationLink}}</a><</uif-table-cell>
+                    <uif-table-cell ng-show="!editmode"><a href="{{r.documentationLink}}">{{r.documentationLink}}</a></uif-table-cell>
                     <uif-table-cell ng-show="!editmode">{{r.message}}</uif-table-cell>
                     <uif-table-cell ng-show="!editmode">{{r.query}}</uif-table-cell>
                     <uif-table-cell ng-show="!editmode">{{r.reducer}}</uif-table-cell>

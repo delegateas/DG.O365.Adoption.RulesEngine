@@ -8,10 +8,17 @@ var ruleengine;
             $scope.newRule = {};
             $scope.editmode = false;
             $scope.isOpen = false;
+            $scope.groups = [];
+            $scope.users = [];
+            var getGroups = function () {
+                $http.get('/api/groups').success(function (data) {
+                    $scope.groups = data;
+                    console.log(data);
+                });
+            };
             var load = function () {
                 $http.get('/api/rules').success(function (data) {
                     $scope.rules = data;
-                    console.log(data);
                 });
             };
             $scope.open = function () {
@@ -55,12 +62,20 @@ var ruleengine;
                     load();
                 });
             };
+            $scope.getUsers = function () {
+                $http.get('/api/users').success(function (data) {
+                    $scope.users = data;
+                    console.log(data);
+                });
+            };
             load();
+            getGroups();
         }
+        RuleCtrl.$inject = ['$scope', '$http'];
         return RuleCtrl;
     }());
-    RuleCtrl.$inject = ['$scope', '$http'];
     ruleengine.RuleCtrl = RuleCtrl;
     angular.module('ruleApp', ['officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
 })(ruleengine || (ruleengine = {}));
+//# sourceMappingURL=script.js.map

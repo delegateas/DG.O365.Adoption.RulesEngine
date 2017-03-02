@@ -1,9 +1,10 @@
-﻿/// <reference path='../src/typings/angular.d.ts' />
+﻿/// <reference path='../typings/angular.d.ts' />
 
 module ruleengine {
 
     export class RuleCtrl {
         public static $inject = ['$scope', '$http'];
+        
         constructor(
             private $scope: IRuleScope,
             private $http: ng.IHttpService
@@ -12,13 +13,20 @@ module ruleengine {
             $scope.newRule = {};
             $scope.editmode = false;
             $scope.isOpen = false;
-
+            $scope.groups = [];
+            $scope.users = [];
+            var getGroups = () => {
+                $http.get('/api/groups').success((data) => {
+                    $scope.groups = data;
+                    console.log(data)
+                });
+            }
             var load = () => {
                 $http.get('/api/rules').success((data) => {
                     $scope.rules = data;
-                    console.log(data);
+                    
                 });
-            };
+            };            
 
             $scope.open = () => {
                 if (!$scope.editmode) {
@@ -68,7 +76,15 @@ module ruleengine {
                 });
             }
 
+            $scope.getUsers = () => {
+                $http.get('/api/users').success((data) => {
+                    $scope.users = data;
+                    console.log(data)
+                });
+            }
+           
             load();
+            getGroups();
         }
     }
 
