@@ -4,7 +4,7 @@ module ruleengine {
 
     export class RuleCtrl {
         public static $inject = ['$scope', '$http'];
-        
+
         constructor(
             private $scope: IRuleScope,
             private $http: ng.IHttpService
@@ -16,17 +16,22 @@ module ruleengine {
             $scope.groups = [];
             $scope.users = [];
             var getGroups = () => {
-                $http.get('/api/groups').success((data) => {
-                    $scope.groups = data;
-                    console.log(data)
+                $http.get('/api/groups').then((data) => {
+                    $scope.groups = data.data;
                 });
             }
+
             var load = () => {
-                $http.get('/api/rules').success((data) => {
-                    $scope.rules = data;
-                    
+                $http.get('/api/rules').then((data) => {
+                    $scope.rules = data.data;
                 });
-            };            
+            };
+
+            var getUsers = () => {
+                $http.get('/api/users').then((data) => {
+                    $scope.users = data.data;
+                });
+            }
 
             $scope.open = () => {
                 if (!$scope.editmode) {
@@ -46,48 +51,86 @@ module ruleengine {
             }
 
             $scope.toEditmode = (rule) => {
+                console.log(rule)
                 $scope.isOpen = true;
                 $scope.editmode = !$scope.editmode;
                 $scope.newRule = angular.copy(rule);
+                if (rule.isGroup) {
+                    $scope.selectedGroup = rule.receiverName
+                } else {
+                    $scope.selectedUser = rule.receiverName
+                }
             }
 
             $scope.create = (rule) => {
-                $http.post('/api/rules', rule).success(() => {
-                    $scope.cancel();
-                    alert("Rule \"" + rule.name + "\" has been added successfully!");
-                    load();
-                });
+                if ($scope.selectedGroup.objectId == null && $scope.selectedUser.objectId == null) {
+                    alert("Please select at least one group or user")
+                } else {
+
+                    rule = acquireReceiver(rule);
+
+                    $http.post('/api/rules', rule).then(() => {
+                        $scope.cancel();
+                        alert("Rule \"" + rule.name + "\" has been added successfully!");
+                        load();
+                        $scope.selectedGroup = $scope.selectedUser = "";
+                    });
+                }
+            }
+
+            var acquireReceiver = (rule) => {
+                if ($scope.selectedGroup.objectId != null) {
+                    rule.isGroup = 1;
+                    rule.receiverObjectId = $scope.selectedGroup.objectId;
+                    rule.receiverName = $scope.selectedGroup.displayName;
+                } else {
+                    rule.isGroup = 0;
+                    rule.receiverObjectId = $scope.selectedUser.objectId;
+                    rule.receiverName = $scope.selectedUser.displayName;
+                }
+                return rule;
             }
 
             $scope.edit = (rule) => {
-                $http.put('/api/rules', rule).success(() => {
-                    $scope.cancel();
-                    console.log("changed")
-                    alert("Rule \"" + rule.name + "\" has been changed successfully!");
-                    load();
-                });
+                if ($scope.selectedGroup.objectId == null && $scope.selectedUser.objectId == null) {
+                    alert("Please select at least one group or user")
+                } else {
+                    rule = acquireReceiver(rule);
+                    $http.put('/api/rules', rule).then(() => {
+                        $scope.cancel();
+                        console.log("changed")
+                        alert("Rule \"" + rule.name + "\" has been changed successfully!");
+                        load();
+                    });
+                }
             }
 
             $scope.delete = (rule) => {
-                $http.delete('/api/rules?name=' + rule.name).success(() => {
+                $http.delete('/api/rules?name=' + rule.name).then(() => {
                     $scope.cancel();
                     alert("Rule \"" + rule.name + "\" has been deleted successfully!")
                     load();
                 });
             }
 
-            $scope.getUsers = () => {
-                $http.get('/api/users').success((data) => {
-                    $scope.users = data;
-                    console.log(data)
-                });
-            }
-           
+            $scope.$watch('isUserFocused', (newValue: boolean, oldValue: boolean) => {
+                if (newValue) {
+                    $scope.selectedGroup = "";
+                }
+            });
+
+            $scope.$watch('isGroupFocused', (newValue: boolean, oldValue: boolean) => {
+                if (newValue) {
+                    $scope.selectedUser = "";
+                }
+            });
+
             load();
             getGroups();
+            getUsers();
         }
     }
 
-    angular.module('ruleApp', ['officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
+    angular.module('ruleApp', ['ui.bootstrap', 'officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
 }

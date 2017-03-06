@@ -27,11 +27,11 @@ module Http =
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
 
 
-  let getRules =
+  let getRules = warbler(fun _ -> 
     match getAllRules with
       | Result.Success s -> OK (Encoding.UTF8.GetString(toJson (s |> Seq.toArray)))
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
-
+      )
 
   let deleteHandler (rule :Choice<string,string>)=
      match rule with
@@ -91,7 +91,7 @@ module Http =
       path "/api/testrule" >=>
         POST >=> request (fun r -> (testRule (fromJson r.rawForm)))
       path "/api/rules" >=> choose [
-        GET >=> getRules;
+        GET >=>  getRules;
         POST >=> request (fun r -> (postRule (fromJson r.rawForm))) ;
         PUT >=> request (fun r -> (updateRule (fromJson r.rawForm))) ;
         DELETE >=> request (fun r -> (deleteHandler (r.queryParam "name"))) ]

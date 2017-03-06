@@ -2,22 +2,24 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-
     <title>Rule Engine Administration</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
+    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/js/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.min.js"></script>
+    <script src="script.js"></script>
     <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.min.css">
     <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.components.min.css">
-    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/js/fabric.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.min.js"></script>
-
-
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body ng-app="ruleApp" ng-controller="ruleCtrl">
+    <div class="ms-Grid-col ms-u-md2 ms-u-lg2"></div>
 
-    <div>
+    <div class="ms-Grid-col ms-u-md8 ms-u-lg8">
         <h1 class="ms-font-su">Rule Administration</h1>
+
         <uif-button ng-click="open()" uif-type="hero">
             <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Add"></i></span>
             Add Rule
@@ -37,29 +39,26 @@
             </div>
             <div>
                 <uif-textfield uif-label="Reducer" ng-model="newRule.reducer" value="{{newRule.reducer}}" />
-            </div>  <div class="ms-Grid">
+            </div>
+            <div class="ms-Grid">
                 <div class="ms-Grid-row">
                     <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
                         <div class="ms-Label">Groups</div>
-                        <div class="ms-CheckBox">
-                            <input tabindex="-1" style="position:absolute" value="{{isAllGroupSelected}}" type="checkbox" ng-model="isAllGroupSelected" ng-change="setAllGroupSelected()">
-                            <span class="ms-Label">All Groups</span>
-                        </div>
-                        <div ng-repeat="group in groups">
-                            <div class="ms-CheckBox">
-                                <input tabindex="-1" style="position:absolute" value="{{group.objectId}}" type="checkbox" ng-model="group.checked" ng-change="changeSelectedList(group)">
-                                <span class="ms-Label">{{group.displayName}}</span>
-                            </div>
-                        </div>
+                        <input type="text" ng-model="selectedGroup"
+                               ng-focus="isGroupFocused=true"
+                               ng-blur="isGroupFocused=false"
+                               ng-disabled="isUserFocused"
+                               placeholder="Search Group"
+                               data-typeahead="group as group.displayName for group in groups | filter:$viewValue | limitTo:20">
                     </div>
                     <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
                         <div class="ms-Label">Users</div>
-                        <div ng-repeat="user in users">
-                            <div class="ms-CheckBox">
-                                <input tabindex="-1" value="{{user.objectId}}" type="checkbox" ng-model="user.checked" style="position:absolute">
-                                <span class="ms-Label">{{user.displayName}}</span>
-                            </div>
-                        </div>
+                        <input type="text" ng-model="selectedUser"
+                               placeholder="Search User"
+                               ng-focus="isUserFocused=true"
+                               ng-blur="isUserFocused=false"
+                               ng-disabled="isGroupFocused"
+                               data-typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:20">
                     </div>
                 </div>
             </div>
@@ -98,5 +97,6 @@
             </uif-table-body>
         </uif-table>
     </div>
+    <div class="ms-Grid-col ms-u-md2 ms-u-lg2"></div>
 </body>
 </html>

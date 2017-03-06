@@ -21,7 +21,14 @@ namespace DG.O365.Adoption.RulesEngine
       [<field: DataMember(Name = "reducer")>]
       Reducer :string
       [<field: DataMember(Name = "message")>]
-      Message :Message }
+      Message :Message
+      [<field: DataMember(Name = "receiverObjectId")>]
+      ReceiverObjectId :string 
+      [<field: DataMember(Name = "receiverName")>]
+      ReceiverName :string 
+      [<field: DataMember(Name = "isGroup")>]
+      IsGroup :int16
+      }
 
   [<DataContract>]
   type RuleInvocation =

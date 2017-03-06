@@ -1,7 +1,6 @@
 ﻿module ruleengine{
     export interface IRuleScope extends ng.IScope {
         rules: any;
-        selectedGroups: any;
         newRule: {};
         editmode: boolean;
         isOpen:boolean;
@@ -15,5 +14,7 @@
         getGroups(): void;
         groups: any;
         users: any;
+        selectedGroup: any;
+        selectedUser: any;
 
 }}

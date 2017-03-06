@@ -40,6 +40,9 @@ module Storage =
       row.Query <- rule.Query
       row.Reducer <- rule.Reducer
       row.Message <- rule.Message
+      row.ReceiverObjectId <- rule.ReceiverObjectId
+      row.ReceiverName <- rule.ReceiverName
+      row.IsGroup <- rule.IsGroup
       ctx.SubmitUpdates()
     sql.GetDataContext() |>tryCatch io
 
@@ -59,6 +62,9 @@ module Storage =
      originalRule.Query <- rule.Query
      originalRule.Reducer <- rule.Reducer
      originalRule.Message <- rule.Message
+     originalRule.ReceiverObjectId <- rule.ReceiverObjectId
+     originalRule.ReceiverName <- rule.ReceiverName
+     originalRule.IsGroup <- rule.IsGroup
      ctx.SubmitUpdates()
     sql.GetDataContext() |> tryCatch io
         
