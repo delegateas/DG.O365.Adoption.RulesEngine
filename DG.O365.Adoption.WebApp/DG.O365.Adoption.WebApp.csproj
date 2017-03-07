@@ -52,13 +52,14 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\interfaces\IRuleScope.ts" />
     <TypeScriptCompile Include="src\controllers\RuleCtrl.ts" />
+    <TypeScriptCompile Include="src\interfaces\IRuleService.ts" />
+    <TypeScriptCompile Include="src\services\RuleService.ts" />
     <TypeScriptCompile Include="src\typings\angular-route.d.ts" />
     <TypeScriptCompile Include="src\typings\angular.d.ts" />
     <TypeScriptCompile Include="src\jquery\jquery.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="src\services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.Sql.UnitTesting.targets" Condition="'$(SQLDBExtensionsRefPath)' != ''" />

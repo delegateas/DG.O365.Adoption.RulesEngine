@@ -9,6 +9,8 @@ module Engine =
   open Suave.Logging
   open Result
   open Storage
+  open Graph
+
 
   [<Literal>]
   let Script_Input = "input"
@@ -93,8 +95,13 @@ module Engine =
 
 
   let handleRuleJob = handleRule pushToAzureStorageQueue
-
-
+  
+  let yieldhandleRuleJob (userJson:JsonValue) rule =
+    let user= userJson.GetProperty("mail").ToString()
+    match user.Contains("@") with
+        | true ->  handleRuleJob user user rule
+        | _ ->  Failure ([|"user has no mail address"|])
+   
   let doJob logger =
     let ctx = sql.GetDataContext()
     let rules = match getAllRules  with
@@ -104,11 +111,20 @@ module Engine =
                    |> ignore
                    Seq.empty
                 | Success s -> s
-
     let errors =
       [for rule in rules do
-          for user in listUsers do
-            yield handleRuleJob user user rule]
+         match rule.IsGroup with 
+          | 0s -> //not group
+             let userData= getGraphData ("users/"+rule.ReceiverObjectId) Settings.Tenant Settings.ClientId Settings.ClientSecret
+             let json = JsonValue.Parse(userData)
+             yield yieldhandleRuleJob json rule
+                 
+          | _ ->  //group
+             let usersList= getGraphData ("groups/"+rule.ReceiverObjectId+"/members") Settings.Tenant Settings.ClientId Settings.ClientSecret
+             let users = JsonValue.Parse(usersList).AsArray()
+             for u in users do
+               yield yieldhandleRuleJob u rule
+         ]
       |> Seq.choose (fun r ->
                        match r with
                        | Failure f -> Some f

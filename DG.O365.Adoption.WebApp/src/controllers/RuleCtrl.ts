@@ -3,11 +3,11 @@
 module ruleengine {
 
     export class RuleCtrl {
-        public static $inject = ['$scope', '$http'];
+        public static $inject = ['$scope', 'ruleService'];
 
         constructor(
             private $scope: IRuleScope,
-            private $http: ng.IHttpService
+            private ruleService: IRuleService
         ) {
             $scope.rules = [];
             $scope.newRule = {};
@@ -15,21 +15,31 @@ module ruleengine {
             $scope.isOpen = false;
             $scope.groups = [];
             $scope.users = [];
+
             var getGroups = () => {
-                $http.get('/api/groups').then((data) => {
+                ruleService.getList("groups").then((data) => {
                     $scope.groups = data.data;
+                }).catch((err) => {
+                    alert("Error! Failed to load groupes.");
+                    console.log("Error has occured: " + err);
                 });
             }
 
             var load = () => {
-                $http.get('/api/rules').then((data) => {
+                ruleService.getList("rules").then((data) => {
                     $scope.rules = data.data;
+                }).catch((err) => {
+                    alert("Error! Failed to load rules.");
+                    console.log("Error has occured: " + err);
                 });
             };
 
             var getUsers = () => {
-                $http.get('/api/users').then((data) => {
+                ruleService.getList("users").then((data) => {
                     $scope.users = data.data;
+                }).catch((err) => {
+                    alert("Error! Failed to load users.");
+                    console.log("Error has occured: " + err);
                 });
             }
 
@@ -43,11 +53,9 @@ module ruleengine {
 
             $scope.cancel = () => {
                 $scope.isOpen = false;
-                if ($scope.editmode) {
-
-                }
                 $scope.editmode = false;
                 $scope.newRule = {};
+                $scope.selectedGroup = $scope.selectedUser = "";
             }
 
             $scope.toEditmode = (rule) => {
@@ -56,24 +64,36 @@ module ruleengine {
                 $scope.editmode = !$scope.editmode;
                 $scope.newRule = angular.copy(rule);
                 if (rule.isGroup) {
-                    $scope.selectedGroup = rule.receiverName
+                    $scope.selectedGroup = searchselectedUserOrGroup($scope.groups, rule.receiverName);
                 } else {
-                    $scope.selectedUser = rule.receiverName
+                    $scope.selectedUser = searchselectedUserOrGroup($scope.users, rule.receiverName);
                 }
+            }
+
+            var searchselectedUserOrGroup = (collection: any, name: string) => {
+                var returnval = null;
+                angular.forEach(collection, (x, y) => {
+                    if (x.displayName == name) {
+                        returnval = x;
+                    }
+                });
+                return returnval;
             }
 
             $scope.create = (rule) => {
                 if ($scope.selectedGroup.objectId == null && $scope.selectedUser.objectId == null) {
                     alert("Please select at least one group or user")
-                } else {
-
+                }
+                else {
                     rule = acquireReceiver(rule);
-
-                    $http.post('/api/rules', rule).then(() => {
+                    ruleService.addRule(rule).then(() => {
                         $scope.cancel();
                         alert("Rule \"" + rule.name + "\" has been added successfully!");
                         load();
                         $scope.selectedGroup = $scope.selectedUser = "";
+                    }).catch((err) => {
+                        alert("Error! Rule has not been added.");
+                        console.log("Error has occured: " + err);
                     });
                 }
             }
@@ -96,21 +116,29 @@ module ruleengine {
                     alert("Please select at least one group or user")
                 } else {
                     rule = acquireReceiver(rule);
-                    $http.put('/api/rules', rule).then(() => {
+                    ruleService.editRule(rule).then(() => {
                         $scope.cancel();
                         console.log("changed")
                         alert("Rule \"" + rule.name + "\" has been changed successfully!");
                         load();
-                    });
+                    })
+                        .catch((err) => {
+                            alert("Error! Rule has not been changed.");
+                            console.log("Error has occured: " + err);
+                        });
                 }
             }
 
             $scope.delete = (rule) => {
-                $http.delete('/api/rules?name=' + rule.name).then(() => {
+                ruleService.deleteRule(rule).then(() => {
                     $scope.cancel();
                     alert("Rule \"" + rule.name + "\" has been deleted successfully!")
                     load();
-                });
+                })
+                    .catch((err) => {
+                        alert("Error! Rule has not been deleted.");
+                        console.log("Error has occured: " + err);
+                    });
             }
 
             $scope.$watch('isUserFocused', (newValue: boolean, oldValue: boolean) => {

@@ -1391,6 +1391,7 @@
     <Compile Include="Config.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Storage.fs" />
+    <Compile Include="Graph.fs" />
     <Compile Include="Engine.fs" />
     <Compile Include="Http.fs" />
     <Compile Include="Main.fs" />
