@@ -67,16 +67,20 @@ module Engine =
   // up to the caller in order to allow for debugging scenarios.
   // `io` is the side effect to perform when the rule returns true.
   let handleRule io (toUser :string)  (forUser :string) (r :Rule) =
+    let timeSent= DateTime.UtcNow.ToString("o")
     let notification = { DocumentationLink = r.DocumentationLink;
                          UserId = toUser;
-                         Message = r.Message }
+                         Message = r.Message;
+                         TimeSent=timeSent;
+                         DequeueCount=0}
     match queryRuleWorkingSet r >=> evalRule r <| forUser with
     | Success b ->
         match b with
-        | true ->
+        | true -> let status= Enum.GetName(typeof<Status>,Status.Queued) 
                   let sent = { UserId = toUser;
-                               TimeSent = DateTime.UtcNow.ToString("s")
-                               RuleName = r.Name }
+                               TimeSent = timeSent
+                               RuleName = r.Name 
+                               Status = status}
                   if (not (notificationExists sent))
                     then (match writeNotificationToAzure sent with
                          | Success s ->
@@ -97,9 +101,9 @@ module Engine =
   let handleRuleJob = handleRule pushToAzureStorageQueue
   
   let yieldhandleRuleJob (userJson:JsonValue) rule =
-    let user= userJson.GetProperty("mail").ToString()
+    let user= userJson.GetProperty("mail").AsString()
     match user.Contains("@") with
-        | true ->  handleRuleJob user user rule
+        | true -> handleRuleJob user user rule
         | _ ->  Failure ([|"user has no mail address"|])
    
   let doJob logger =
@@ -119,11 +123,12 @@ module Engine =
              let json = JsonValue.Parse(userData)
              yield yieldhandleRuleJob json rule
                  
-          | _ ->  //group
+          | 1s ->  //group
              let usersList= getGraphData ("groups/"+rule.ReceiverObjectId+"/members") Settings.Tenant Settings.ClientId Settings.ClientSecret
              let users = JsonValue.Parse(usersList).AsArray()
              for u in users do
                yield yieldhandleRuleJob u rule
+          | _ -> ()
          ]
       |> Seq.choose (fun r ->
                        match r with

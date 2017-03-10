@@ -8,6 +8,11 @@ namespace DG.O365.Adoption.RulesEngine
   type Message = string
   type UserId = string // Assumed an email at this time
 
+  type Status =
+   | Queued = 0
+   | Sent = 1
+   | Deleted = 2
+
   [<DataContract>]
   type Rule =
     { [<PartitionKey>]
@@ -42,7 +47,9 @@ namespace DG.O365.Adoption.RulesEngine
   type Notification =
     { UserId :UserId
       Message :Message
-      DocumentationLink :DocumentationLink }
+      DocumentationLink :DocumentationLink 
+      TimeSent:string
+      DequeueCount:int}
 
   type AuditEvent =
     { [<PartitionKey>] Date :string
@@ -63,4 +70,6 @@ namespace DG.O365.Adoption.RulesEngine
       [<field: DataMember(Name = "timeSent")>]
       TimeSent :string
       [<field: DataMember(Name = "ruleName")>]
-      RuleName :string }
+      RuleName :string 
+      [<field: DataMember(Name = "status")>]
+      Status : string }

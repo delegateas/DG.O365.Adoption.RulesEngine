@@ -137,11 +137,10 @@ module Storage =
 
 
   let notificationExists (notification :SentNotification) =
-
     let fromSentNotifications (n :SentNotification) =
       let _, fromSentTable = fetchNotificationTable
       Query.all<SentNotification>
-      |> Query.where <@ fun g s -> s.PartitionKey = n.UserId && g.RuleName = n.RuleName @>
+      |> Query.where <@ fun g s -> s.PartitionKey = n.UserId && g.RuleName = n.RuleName && g.Status <> Enum.GetName(typeof<Status>,Status.Deleted) @>
       |> fromSentTable
 
     match notification |> tryCatch fromSentNotifications with

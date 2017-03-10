@@ -117,6 +117,8 @@ var ruleengine;
                 }
             };
             $scope.delete = function (rule) {
+                console.log("deleting");
+                console.log(rule);
                 ruleService.deleteRule(rule).then(function () {
                     $scope.cancel();
                     alert("Rule \"" + rule.name + "\" has been deleted successfully!");
@@ -190,9 +192,9 @@ var ruleengine;
                 return promise;
             };
             this.deleteRule = function (rule) {
-                var url = '/api/rules';
+                var url = '/api/rules?name=' + rule.name;
                 var deleteData = rule;
-                var promise = _this.$http.delete(url, deleteData).
+                var promise = _this.$http.delete(url).
                     then(function (data) {
                     return data;
                 }).

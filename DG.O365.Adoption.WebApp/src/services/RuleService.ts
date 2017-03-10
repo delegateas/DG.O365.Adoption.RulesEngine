@@ -47,9 +47,9 @@
 
         }
         deleteRule = (rule: any) => {
-            var url: string = '/api/rules';
+            var url: string = '/api/rules?name='+rule.name;
             var deleteData = rule;
-            var promise = this.$http.delete(url, deleteData).
+            var promise = this.$http.delete(url).
                 then(function (data: any) {
                     return data;
                 }).
