@@ -25,15 +25,14 @@ namespace DG.O365.Adoption.DispatchJob
         private static CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
           CloudConfigurationManager.GetSetting("StorageConnectionString"));
         public static async void ProcessQueueMessage([QueueTrigger("notification-queue")] CloudQueueMessage message, TextWriter log)
-
         {
-            Status status=Status.Queued;
+            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+            CloudQueue queue = queueClient.GetQueueReference("notification-queue");
+            queue.CreateIfNotExists();
+            Status status =Status.Queued;
             Notification notificationMsg = JsonConvert.DeserializeObject<Notification>(message.AsString);
             try
             {
-                CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
-                CloudQueue queue = queueClient.GetQueueReference("notification-queue");
-                queue.CreateIfNotExists();
                
 
                 var isUserOnline = await CheckAvailablity(notificationMsg.UserId);
@@ -63,8 +62,11 @@ namespace DG.O365.Adoption.DispatchJob
 
                 }
             }
-            catch (Exception ex) {
-                //if error occurs, the message will be re-queued.
+            catch (Exception ex)
+            {
+                var notification = JsonConvert.SerializeObject(notificationMsg);
+                var buffer = System.Text.Encoding.UTF8.GetBytes(notification);               
+                await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(1), null, null);
                 status = Status.Queued;
             }
             UpdateNotificationHistory(notificationMsg, status);

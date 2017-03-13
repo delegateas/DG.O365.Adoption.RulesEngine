@@ -21,7 +21,7 @@ namespace DG.O365.Adoption.DispatchJob.Models
         public string UserId { get; set; }
         public string TimeSent { get; set; }
         public string RuleName { get; set; }
-        public string Status { get; set;}
-}
+        public string Status { get; set; }
+    }
 }
 
