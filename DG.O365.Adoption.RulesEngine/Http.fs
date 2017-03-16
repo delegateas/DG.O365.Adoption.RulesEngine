@@ -3,6 +3,8 @@ namespace DG.O365.Adoption.RulesEngine
 module Http =
   open System.Text
   open Suave
+  open Suave.Logging
+  open Suave.Log
   open Suave.Json
   open Suave.RequestErrors
   open Suave.Operators
@@ -47,6 +49,12 @@ module Http =
       | Result.Success s -> OK ""
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
   
+  let trigger = warbler(fun _ -> 
+    match triggerJob with
+     | Result.Success _ -> OK ""
+     | Result.Failure f -> BAD_REQUEST "Failed"
+     )
+
   let app :WebPart =
     choose [
       path "/" >=> GET >=> Files.file "static/index.html"
@@ -56,6 +64,8 @@ module Http =
         GET >=> OK (getGraphData "users" Settings.Tenant Settings.ClientId Settings.ClientSecret);
       path "/api/testrule" >=>
         POST >=> request (fun r -> (testRule (fromJson r.rawForm)))
+      path "/api/trigger" >=>
+        GET >=> trigger
       path "/api/rules" >=> choose [
         GET >=>  getRules;
         POST >=> request (fun r -> (postRule (fromJson r.rawForm))) ;

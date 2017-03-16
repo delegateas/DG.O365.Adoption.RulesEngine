@@ -6,4 +6,4 @@
         deleteRule(rule: any): ng.IPromise<any>
        
     }
-}
+} 

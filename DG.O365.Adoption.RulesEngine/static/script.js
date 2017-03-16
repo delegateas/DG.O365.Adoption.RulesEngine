@@ -117,8 +117,6 @@ var ruleengine;
                 }
             };
             $scope.delete = function (rule) {
-                console.log("deleting");
-                console.log(rule);
                 ruleService.deleteRule(rule).then(function () {
                     $scope.cancel();
                     alert("Rule \"" + rule.name + "\" has been deleted successfully!");

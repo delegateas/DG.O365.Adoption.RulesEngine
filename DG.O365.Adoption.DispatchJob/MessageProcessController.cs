@@ -29,18 +29,18 @@ namespace DG.O365.Adoption.DispatchJob
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
             CloudQueue queue = queueClient.GetQueueReference("notification-queue");
             queue.CreateIfNotExists();
-            Status status =Status.Queued;
+            Status status = Status.Queued;
             Notification notificationMsg = JsonConvert.DeserializeObject<Notification>(message.AsString);
             try
             {
-               
+
 
                 var isUserOnline = await CheckAvailablity(notificationMsg.UserId);
                 if (notificationMsg.DequeueCount > 5)
                 {
                     status = Status.Deleted;
                     //just consume message without do anything.
-                }              
+                }
                 else if (isUserOnline)
                 {
                     status = Status.Sent;
@@ -65,7 +65,7 @@ namespace DG.O365.Adoption.DispatchJob
             catch (Exception ex)
             {
                 var notification = JsonConvert.SerializeObject(notificationMsg);
-                var buffer = System.Text.Encoding.UTF8.GetBytes(notification);               
+                var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                 await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(1), null, null);
                 status = Status.Queued;
             }
@@ -89,7 +89,8 @@ namespace DG.O365.Adoption.DispatchJob
         /// </summary>
         /// <param name="notification"></param>
         /// <param name="status"></param>
-        private static void UpdateNotificationHistory(Notification notification,Status status) {
+        private static void UpdateNotificationHistory(Notification notification, Status status)
+        {
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
             CloudTable table = tableClient.GetTableReference("NotificationHistory");
             table.CreateIfNotExists();
@@ -97,12 +98,13 @@ namespace DG.O365.Adoption.DispatchJob
             TableOperation retrieveOperation = TableOperation.Retrieve<NotificationHistoryEntity>(notification.UserId, notification.TimeSent);
             TableResult retrievedResult = table.Execute(retrieveOperation);
             NotificationHistoryEntity updateEntity = (NotificationHistoryEntity)retrievedResult.Result;
-            if (updateEntity != null) {
+            if (updateEntity != null)
+            {
                 updateEntity.Status = Enum.GetName(typeof(Status), status);
-                updateEntity.TimeSent = DateTime.UtcNow.ToString("o");                    
+                updateEntity.TimeSent = DateTime.UtcNow.ToString("o");
+                TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+                table.Execute(insertOrReplaceOperation);
             }
-            TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
-            table.Execute(insertOrReplaceOperation);
         }
     }
 }

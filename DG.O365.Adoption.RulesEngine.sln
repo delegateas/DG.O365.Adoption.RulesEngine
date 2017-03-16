@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DG.O365.Adoption.WebApp", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DG.O365.Adoption.DispatchJob", "DG.O365.Adoption.DispatchJob\DG.O365.Adoption.DispatchJob.csproj", "{A26D0B4E-8B1A-4A91-BA88-B25F98CD60E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dg.O365.Adoption.RuleTriggerJob", "Dg.O365.Adoption.RuleTriggerJob\Dg.O365.Adoption.RuleTriggerJob.csproj", "{051E6C50-198F-4F50-98D7-B3498DA01B1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{A26D0B4E-8B1A-4A91-BA88-B25F98CD60E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A26D0B4E-8B1A-4A91-BA88-B25F98CD60E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A26D0B4E-8B1A-4A91-BA88-B25F98CD60E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{051E6C50-198F-4F50-98D7-B3498DA01B1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{051E6C50-198F-4F50-98D7-B3498DA01B1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{051E6C50-198F-4F50-98D7-B3498DA01B1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{051E6C50-198F-4F50-98D7-B3498DA01B1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

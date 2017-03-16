@@ -106,12 +106,13 @@ module Engine =
         | true -> handleRuleJob user user rule
         | _ ->  Failure ([|"user has no mail address"|])
    
-  let doJob logger =
+
+  let triggerJob =
     let ctx = sql.GetDataContext()
     let rules = match getAllRules  with
                 | Failure f ->
                    f
-                   |> Seq.map (fun e -> log logger "App" LogLevel.Error e)
+                   |> Seq.map (fun e -> e)
                    |> ignore
                    Seq.empty
                 | Success s -> s
@@ -134,28 +135,8 @@ module Engine =
                        match r with
                        | Failure f -> Some f
                        | Success _ -> None)
-    if Seq.isEmpty errors then Success () else Failure (errors |> Seq.toArray)
+    let e = errors.ToString
+    if Seq.isEmpty errors then Success () else Failure e
+    
 
-
-  let rec jobAsync interval logger =
-   async {
-    log logger "App" LogLevel.Info "Starting Job ..."
-    match doJob logger with
-      | Success _ ->
-        log logger "App" LogLevel.Info "Job completed successfully."
-      | Failure f ->
-        f
-        |> Seq.map (fun e ->
-                      log logger "App" LogLevel.Error (sprintf "Error: %A" e))
-        |> ignore
-    log logger "App" LogLevel.Info "Resuming sleep ..."
-    do! Async.Sleep(interval)
-    return! jobAsync interval logger }
-
-
-  let runAsync interval logger =
-   async {
-     try
-       do! jobAsync interval logger
-     finally
-       log logger "App" LogLevel.Fatal "Rule Engine Job interrupted." }
+ 

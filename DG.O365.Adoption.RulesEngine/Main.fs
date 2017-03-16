@@ -21,6 +21,5 @@ module Main =
     log logger "App" LogLevel.Info (sprintf "Job running every %ims ..."
                                             Settings.TimerJobInterval)
     let stop = new System.Threading.CancellationTokenSource()
-    Async.Start(Engine.runAsync Settings.TimerJobInterval logger, stop.Token)
     startWebServer serverConfig app
     0
