@@ -1,18 +1,8 @@
 namespace DG.O365.Adoption.RulesEngine
 
-[<AutoOpen>]
+
 module Config =
   open System
-  open FSharp.Configuration
-
-  type Settings = AppSettings<"app.config">
-  let private ACS = "AzureConnectionString"
-  let private NURI = "NotificationUri"
-  let private INTRVL = "TimerJobInterval"
-  let private TEN = "Tennant"
-  let private CID = "ClientId"
-  let private CS = "ClientSecret"
-  let private RESO = "Resource"
 
   let private env =
     Environment.GetEnvironmentVariables()
@@ -20,17 +10,37 @@ module Config =
     |> Seq.map (fun e -> e.Key :?> string, e.Value :?> string)
     |> dict
 
-  Settings.AzureConnectionString <- 
-    if env.ContainsKey(ACS) then env.Item(ACS) else Settings.AzureConnectionString
-  Settings.NotificationUri <- 
-    if env.ContainsKey(NURI) then new Uri(env.Item(NURI)) else Settings.NotificationUri
-  Settings.TimerJobInterval <- 
-    if env.ContainsKey(INTRVL) then Int32.Parse(env.Item(INTRVL)) else Settings.TimerJobInterval
-  Settings.Tenant <- 
-    if env.ContainsKey(TEN) then env.Item(TEN) else Settings.Tenant
-  Settings.ClientId <- 
-    if env.ContainsKey(CID) then new Guid(env.Item(CID)) else Settings.ClientId
-  Settings.ClientSecret <- 
-    if env.ContainsKey(CS) then env.Item(CS) else Settings.ClientSecret
-  Settings.Resource <- 
-    if env.ContainsKey(RESO) then new Uri(env.Item(RESO)) else Settings.Resource
+
+  let LoadConfigValue v =
+    let appsettings = new Configuration.AppSettingsReader()
+    let ret =
+      match Environment.GetEnvironmentVariable("APPSETTING_" + v) with
+      | null -> match Environment.GetEnvironmentVariable(v) with
+                | null -> appsettings.GetValue(v, typeof<string>).ToString()
+                | s -> s
+      | s -> s
+    match ret with
+    | null -> String.Empty
+    | s -> s 
+
+
+  
+  type Settings =
+   { AzureConnectionString :string
+     DaleConnectionString :string
+     NotificationUri :string
+     Tenant :string
+     ClientId :string
+     ClientSecret :string
+     Resource :string }
+
+  let Conf : Settings =
+    { AzureConnectionString = LoadConfigValue "AzureConnectionString";
+      DaleConnectionString = LoadConfigValue "DaleConnectionString";
+      NotificationUri = LoadConfigValue "NotificationUri";
+      Tenant = LoadConfigValue "Tenant";
+      ClientId = LoadConfigValue "ClientId";
+      ClientSecret = LoadConfigValue "ClientSecret";
+      Resource = LoadConfigValue "Resource";
+       }  
+

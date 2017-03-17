@@ -14,6 +14,7 @@ module Http =
   open FSharp.Data
   open FSharp.Data.HttpRequestHeaders
 
+  open Config
   open Engine
   open Storage
   open Graph
@@ -59,9 +60,9 @@ module Http =
     choose [
       path "/" >=> GET >=> Files.file "static/index.html"
       path "/api/groups" >=> 
-        GET >=> OK (getGraphData "groups" Settings.Tenant Settings.ClientId Settings.ClientSecret);
+        GET >=> OK (getGraphData "groups" Conf.Tenant Conf.ClientId Conf.ClientSecret);
       path "/api/users" >=> 
-        GET >=> OK (getGraphData "users" Settings.Tenant Settings.ClientId Settings.ClientSecret);
+        GET >=> OK (getGraphData "users" Conf.Tenant Conf.ClientId Conf.ClientSecret);
       path "/api/testrule" >=>
         POST >=> request (fun r -> (testRule (fromJson r.rawForm)))
       path "/api/trigger" >=>

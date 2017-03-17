@@ -12,11 +12,10 @@ namespace Dg.O365.Adoption.RuleTriggerJob
 {
     public static class Functions
     {
-        private static HttpClient client = new HttpClient();
         public static void StartupJob([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] TimerInfo timer)
         {
-            var url = ConfigurationManager.AppSettings["TriggerUrl"];
-            client.GetAsync(url);
+            var res=DG.O365.Adoption.RulesEngine.Engine.triggerJob;
+
         }
     }
 }

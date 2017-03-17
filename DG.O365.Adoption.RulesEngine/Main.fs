@@ -11,15 +11,13 @@ module Main =
   let main args =
     let port =  System.UInt16.Parse args.[0]
     let ip = System.Net.IPAddress.Parse "127.0.0.1"
-    let logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Info
+    //let logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Info
     let serverConfig =
       { Web.defaultConfig with
           homeFolder = Some (Path.GetFullPath "./static")
-          logger = logger
+         // logger = logger
           bindings = [ HttpBinding.mk HTTP ip port ] }
 
-    log logger "App" LogLevel.Info (sprintf "Job running every %ims ..."
-                                            Settings.TimerJobInterval)
     let stop = new System.Threading.CancellationTokenSource()
     startWebServer serverConfig app
     0

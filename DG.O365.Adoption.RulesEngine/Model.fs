@@ -33,6 +33,8 @@ namespace DG.O365.Adoption.RulesEngine
       ReceiverName :string 
       [<field: DataMember(Name = "isGroup")>]
       IsGroup :int16
+      [<field: DataMember(Name = "dialog")>]
+      Dialog :string
       }
 
   [<DataContract>]

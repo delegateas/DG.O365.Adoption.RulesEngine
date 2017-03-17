@@ -7,6 +7,7 @@ module Engine =
   open Yaaf.FSharp.Scripting
   open Suave.Log
   open Suave.Logging
+  open Config
   open Result
   open Storage
   open Graph
@@ -106,7 +107,7 @@ module Engine =
         | true -> handleRuleJob user user rule
         | _ ->  Failure ([|"user has no mail address"|])
    
-
+  
   let triggerJob =
     let ctx = sql.GetDataContext()
     let rules = match getAllRules  with
@@ -120,12 +121,12 @@ module Engine =
       [for rule in rules do
          match rule.IsGroup with 
           | 0s -> //not group
-             let userData= getGraphData ("users/"+rule.ReceiverObjectId) Settings.Tenant Settings.ClientId Settings.ClientSecret
+             let userData= getGraphData ("users/"+rule.ReceiverObjectId) Conf.Tenant Conf.ClientId Conf.ClientSecret
              let json = JsonValue.Parse(userData)
              yield yieldhandleRuleJob json rule
                  
           | 1s ->  //group
-             let usersList= getGraphData ("groups/"+rule.ReceiverObjectId+"/members") Settings.Tenant Settings.ClientId Settings.ClientSecret
+             let usersList= getGraphData ("groups/"+rule.ReceiverObjectId+"/members") Conf.Tenant Conf.ClientId Conf.ClientSecret
              let users = JsonValue.Parse(usersList).AsArray()
              for u in users do
                yield yieldhandleRuleJob u rule

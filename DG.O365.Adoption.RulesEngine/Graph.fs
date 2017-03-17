@@ -4,6 +4,7 @@ module Graph=
   open System.Text
   open FSharp.Data
   open FSharp.Data.HttpRequestHeaders
+  open Config
   
   //Get user/group information from AAD Graph
 
@@ -31,7 +32,7 @@ module Graph=
     let oauthTokenRes = fetchAuthToken tenant (clientId.ToString()) clientsecret
     match oauthTokenRes.IsSome with
     | true -> 
-        let url = "https://graph.windows.net/"+Settings.Tenant+"/"+filter+"?api-version=1.6"
+        let url = "https://graph.windows.net/"+Conf.Tenant+"/"+filter+"?api-version=1.6"
         let resp =
            Http.Request(url, httpMethod = "GET",
                    headers = [Authorization ("Bearer " + oauthTokenRes.Value);

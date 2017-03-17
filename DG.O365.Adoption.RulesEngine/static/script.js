@@ -141,9 +141,9 @@ var ruleengine;
             getGroups();
             getUsers();
         }
-        RuleCtrl.$inject = ['$scope', 'ruleService'];
         return RuleCtrl;
     }());
+    RuleCtrl.$inject = ['$scope', 'ruleService'];
     ruleengine.RuleCtrl = RuleCtrl;
     angular.module('ruleApp', ['ui.bootstrap', 'officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
@@ -190,7 +190,7 @@ var ruleengine;
                 return promise;
             };
             this.deleteRule = function (rule) {
-                var url = '/api/rules?name=' + rule.name;
+                var url = '/api/rules?name=' + encodeURIComponent(rule.name);
                 var deleteData = rule;
                 var promise = _this.$http.delete(url).
                     then(function (data) {
@@ -202,11 +202,10 @@ var ruleengine;
                 return promise;
             };
         }
-        RuleService.$inject = ['$http'];
         return RuleService;
     }());
+    RuleService.$inject = ['$http'];
     ruleengine.RuleService = RuleService;
     angular.module('ruleApp')
         .service('ruleService', RuleService);
 })(ruleengine || (ruleengine = {}));
-//# sourceMappingURL=script.js.map
