@@ -22,8 +22,7 @@ namespace DG.O365.Adoption.DispatchJob
     {
         private static HttpClient client = new HttpClient();
         private static string baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
-        private static CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-          CloudConfigurationManager.GetSetting("StorageConnectionString"));
+        private static CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["AzureWebJobsStorage"]);
         public static async void ProcessQueueMessage([QueueTrigger("notification-queue")] CloudQueueMessage message, TextWriter log)
         {
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
@@ -48,7 +47,8 @@ namespace DG.O365.Adoption.DispatchJob
                     var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                     var byteNotification = new ByteArrayContent(buffer);
                     byteNotification.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    await client.PostAsync(baseUrl + "api/start", byteNotification);
+                    var resp = await client.PostAsync(baseUrl + "api/start", byteNotification);
+                    resp.EnsureSuccessStatusCode();
                 }
                 else
                 {
