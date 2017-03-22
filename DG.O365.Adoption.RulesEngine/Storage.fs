@@ -18,7 +18,10 @@ module Storage =
   open Result
 
   let fetchAccount =
-    let conn = Settings.AzureConnectionString
+    let conn = Conf.AzureConnectionString
+    CloudStorageAccount.Parse conn
+  let fetchDaleAccount =
+    let conn = Conf.DaleConnectionString
     CloudStorageAccount.Parse conn
 
   // ConnectionStringName is looked up in the app.config and must contain a
@@ -43,6 +46,7 @@ module Storage =
       row.ReceiverObjectId <- rule.ReceiverObjectId
       row.ReceiverName <- rule.ReceiverName
       row.IsGroup <- rule.IsGroup
+      row.Dialog <- rule.Dialog
       ctx.SubmitUpdates()
     sql.GetDataContext() |>tryCatch io
 
@@ -65,6 +69,7 @@ module Storage =
      originalRule.ReceiverObjectId <- rule.ReceiverObjectId
      originalRule.ReceiverName <- rule.ReceiverName
      originalRule.IsGroup <- rule.IsGroup
+     originalRule.Dialog <- rule.Dialog
      ctx.SubmitUpdates()
     sql.GetDataContext() |> tryCatch io
         
@@ -95,7 +100,7 @@ module Storage =
 
 
   let listUserTables =
-    let account = fetchAccount
+    let account = fetchDaleAccount
     let tableClient = account.CreateCloudTableClient()
     tableClient.ListTables()
     |> Seq.filter (fun t -> t.Name.StartsWith("Audit"))
@@ -111,7 +116,7 @@ module Storage =
 
   let fromAuditTable user query =
     let io (user, query) =
-      let account = fetchAccount
+      let account = fetchDaleAccount
       let tableClient = account.CreateCloudTableClient()
       let tableName = "Audit" + user
       let table = tableClient.GetTableReference(tableName)
@@ -163,7 +168,7 @@ module Storage =
 
   let postNotification (n :Notification) =
     let io n =
-      let _ = Http.Request(Settings.NotificationUri.ToString(),
+      let _ = Http.Request(Conf.NotificationUri.ToString(),
                            httpMethod = "POST",
                            headers = [ ContentType "application/json" ],
                            body = TextRequest (JsonConvert.SerializeObject n))

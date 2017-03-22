@@ -69,11 +69,13 @@ module Engine =
   // `io` is the side effect to perform when the rule returns true.
   let handleRule io (toUser :string)  (forUser :string) (r :Rule) =
     let timeSent= DateTime.UtcNow.ToString("o")
-    let notification = { DocumentationLink = r.DocumentationLink;
+    let notification:Notification = { DocumentationLink = r.DocumentationLink;
                          UserId = toUser;
                          Message = r.Message;
-                         TimeSent=timeSent;
-                         DequeueCount=0}
+                         TimeSent = timeSent;
+                         DequeueCount = 0;
+                         RuleName = r.Name;
+                         Dialog = r.Dialog }
     match queryRuleWorkingSet r >=> evalRule r <| forUser with
     | Success b ->
         match b with

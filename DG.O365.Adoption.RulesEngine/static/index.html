@@ -9,12 +9,12 @@
     <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/js/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.min.js"></script>
     <script src="script.js"></script>
-  
+
     <script src="monaco/vs/loader.js"></script>
     <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.min.css">
     <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.components.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css">
-   
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body ng-app="ruleApp" ng-controller="ruleCtrl">
@@ -25,61 +25,58 @@
 
         <uif-button ng-click="open()" uif-type="hero">
             <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Add"></i>Add Rule</span>
-            
         </uif-button>
         <div ng-show="isOpen">
-                <div>
-                    <uif-textfield uif-label="Name" ng-disabled="editmode" name="input" required pattern="[a-zA-Z0-9]" ng-model="newRule.name" value="{{newRule.name}}" />
-                </div>
-                <div>
-                    <uif-textfield uif-label="Documentation link" required ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}" />
-                </div>
-                <div>
-                    <uif-textfield uif-label="Message" required ng-model="newRule.message" value="{{newRule.message}}" />
-                </div>
-                <div>
-                    <uif-textfield uif-label="Query" required ng-model="newRule.query" value="{{newRule.query}}" />
-                </div>
-                <div>
-                    <uif-textfield uif-label="Reducer" required ng-model="newRule.reducer" value="{{newRule.reducer}}" />
-                </div>
-                <div>
-                    <div class="ms-Label">Dialog</div>
-                    <textarea  style="height:400px;width:100%" required  ng-model="newRule.dialog" value="{{newRule.dialog}}" />
-                </div>
-                <!--<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>-->
-                <div class="ms-Grid">
-                    <div class="ms-Grid-row">
-                        <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
-                            <div class="ms-Label">Groups</div>
-                            <input type="text" ng-model="selectedGroup"
-                                   ng-focus="isGroupFocused=true"
-                                   ng-blur="isGroupFocused=false"
-                                   ng-disabled="isUserFocused"
-                                   typeaheadSelectOnExact=true
-                                   placeholder="Search Group"
-                                   data-typeahead="group as group.displayName for group in groups | filter:$viewValue | limitTo:20">
-                        </div>
-                        <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
-                            <div class="ms-Label">Users</div>
-                            <input type="text" ng-model="selectedUser"
-                                   placeholder="Search User"
-                                   ng-focus="isUserFocused=true"
-                                   ng-blur="isUserFocused=false"
-                                   typeaheadSelectOnExact=true
-                                   ng-disabled="isGroupFocused"
-                                   data-typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:20">
-                        </div>
+            <div>
+                <uif-textfield uif-label="Name" ng-disabled="editmode" name="input" required pattern="[a-zA-Z0-9]" ng-model="newRule.name" value="{{newRule.name}}" />
+            </div>
+            <div>
+                <uif-textfield uif-label="Documentation link" required ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}" />
+            </div>
+            <div>
+                <uif-textfield uif-label="Message" required ng-model="newRule.message" value="{{newRule.message}}" />
+            </div>
+            <div>
+                <uif-textfield uif-label="Query" required ng-model="newRule.query" value="{{newRule.query}}" />
+            </div>
+            <div>
+                <uif-textfield uif-label="Reducer" required ng-model="newRule.reducer" value="{{newRule.reducer}}" />
+            </div>
+            <div class="ms-Label">Dialog</div>
+            <textarea  style="height:400px;width:100%" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
+            <!--<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>-->
+            <div class="ms-Grid">
+                <div class="ms-Grid-row">
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
+                        <div class="ms-Label">Groups</div>
+                        <input type="text" ng-model="selectedGroup"
+                               ng-focus="isGroupFocused=true"
+                               ng-blur="isGroupFocused=false"
+                               ng-disabled="isUserFocused"
+                               typeaheadSelectOnExact=true
+                               placeholder="Search Group"
+                               data-typeahead="group as group.displayName for group in groups | filter:$viewValue | limitTo:20">
+                    </div>
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
+                        <div class="ms-Label">Users</div>
+                        <input type="text" ng-model="selectedUser"
+                               placeholder="Search User"
+                               ng-focus="isUserFocused=true"
+                               ng-blur="isUserFocused=false"
+                               typeaheadSelectOnExact=true
+                               ng-disabled="isGroupFocused"
+                               data-typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:20">
                     </div>
                 </div>
+            </div>
 
-            
-                <div>
-                    <uif-button style="float:right" ng-click="cancel()">cancel</uif-button>
-                    <uif-button uif-type="primary" ng-show="!editmode" style="float:right" ng-click="create(newRule)">create</uif-button>
-                    <uif-button ng-show="editmode" uif-type="primary" style="float:right" ng-click="edit(newRule)">edit</uif-button>
-                </div>
-</div>
+
+            <div>
+                <uif-button style="float:right" ng-click="cancel()">cancel</uif-button>
+                <uif-button uif-type="primary" ng-show="!editmode" style="float:right" ng-click="create(newRule)">create</uif-button>
+                <uif-button ng-show="editmode" uif-type="primary" style="float:right" ng-click="edit(newRule)">edit</uif-button>
+            </div>
+        </div>
 
         <uif-table ng-show="!editmode">
             <uif-table-head>

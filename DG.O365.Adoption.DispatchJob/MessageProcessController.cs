@@ -54,7 +54,7 @@ namespace DG.O365.Adoption.DispatchJob
                 {
                     status = Status.Queued;
                     var dcount = notificationMsg.DequeueCount;
-                    var updatedNotification = new Notification(notificationMsg.UserId, notificationMsg.Message, notificationMsg.DocumentationLink, notificationMsg.TimeSent, dcount + 1);
+                    var updatedNotification = new Notification(notificationMsg.UserId, notificationMsg.Message, notificationMsg.DocumentationLink, notificationMsg.TimeSent, dcount + 1,notificationMsg.RuleName,notificationMsg.Dialog);
                     var notification = JsonConvert.SerializeObject(updatedNotification);
                     var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                     var delay = 10 * (Math.Pow(dcount + 1, dcount));

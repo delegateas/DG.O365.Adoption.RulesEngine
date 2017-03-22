@@ -51,7 +51,10 @@ namespace DG.O365.Adoption.RulesEngine
       Message :Message
       DocumentationLink :DocumentationLink 
       TimeSent:string
-      DequeueCount:int}
+      DequeueCount:int
+      RuleName:string
+      Dialog:string      
+      }
 
   type AuditEvent =
     { [<PartitionKey>] Date :string

@@ -12,7 +12,7 @@ namespace Dg.O365.Adoption.RuleTriggerJob
 {
     public static class Functions
     {
-        public static void StartupJob([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] TimerInfo timer)
+        public static void StartupJob([TimerTrigger("0 */1 * * * *", RunOnStartup = true)] TimerInfo timer)
         {
             var res=DG.O365.Adoption.RulesEngine.Engine.triggerJob;
 
