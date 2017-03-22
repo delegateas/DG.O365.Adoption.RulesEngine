@@ -18,9 +18,10 @@ namespace Dg.O365.Adoption.RuleTriggerJob
             var config = new JobHostConfiguration();
             config.Tracing.ConsoleLevel = TraceLevel.Verbose;
 
-            if (config.IsDevelopment)
+            if (true || config.IsDevelopment)
             {
                 config.UseDevelopmentSettings();
+                config.HostId = "baba";
             }
             config.UseTimers();
 
