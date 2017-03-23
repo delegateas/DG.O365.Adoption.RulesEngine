@@ -110,7 +110,7 @@ module Engine =
         | _ ->  Failure ([|"user has no mail address"|])
    
   
-  let triggerJob =
+  let triggerJob () =
     let ctx = sql.GetDataContext()
     let rules = match getAllRules  with
                 | Failure f ->
@@ -138,8 +138,10 @@ module Engine =
                        match r with
                        | Failure f -> Some f
                        | Success _ -> None)
-    let e = errors.ToString
-    if Seq.isEmpty errors then Success () else Failure e
-    
+    if Seq.isEmpty errors then Success () else Failure (errors)
 
+  let trigger () =
+    match triggerJob () with
+    | Success _ -> ()
+    | Failure s -> raise (Exception (Seq.reduce (+) (Seq.concat s)))
  

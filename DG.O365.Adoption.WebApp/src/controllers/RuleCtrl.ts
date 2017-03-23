@@ -99,7 +99,7 @@ module ruleengine {
             }
 
             var acquireReceiver = (rule) => {
-                if ($scope.selectedGroup.objectId != null) {
+                if ($scope.selectedGroup != undefined && $scope.selectedGroup.objectId != null) {
                     rule.isGroup = 1;
                     rule.receiverObjectId = $scope.selectedGroup.objectId;
                     rule.receiverName = $scope.selectedGroup.displayName;
@@ -112,7 +112,7 @@ module ruleengine {
             }
 
             $scope.edit = (rule) => {
-                if ($scope.selectedGroup.objectId == null && $scope.selectedUser.objectId == null) {
+                if (($scope.selectedGroup == undefined || $scope.selectedGroup.objectId == null) && ($scope.selectedUser == undefined || $scope.selectedUser.objectId == null)) {
                     alert("Please select at least one group or user")
                 } else {
                     rule = acquireReceiver(rule);
@@ -152,6 +152,7 @@ module ruleengine {
                     $scope.selectedUser = "";
                 }
             });
+
 
             load();
             getGroups();

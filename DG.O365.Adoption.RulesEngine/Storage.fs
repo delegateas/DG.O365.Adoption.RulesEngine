@@ -168,7 +168,7 @@ module Storage =
 
   let postNotification (n :Notification) =
     let io n =
-      let _ = Http.Request(Conf.NotificationUri.ToString(),
+      let _ = Http.Request(Conf.BaseUrl.ToString()+"api/start",
                            httpMethod = "POST",
                            headers = [ ContentType "application/json" ],
                            body = TextRequest (JsonConvert.SerializeObject n))

@@ -13,22 +13,13 @@ module Config =
 
   let LoadConfigValue v =
     let appsettings = new Configuration.AppSettingsReader()
-    let ret =
-      match Environment.GetEnvironmentVariable("APPSETTING_" + v) with
-      | null -> match Environment.GetEnvironmentVariable(v) with
-                | null -> appsettings.GetValue(v, typeof<string>).ToString()
-                | s -> s
-      | s -> s
-    match ret with
-    | null -> String.Empty
-    | s -> s 
-
+    appsettings.GetValue(v, typeof<string>).ToString()
 
   
   type Settings =
    { AzureConnectionString :string
      DaleConnectionString :string
-     NotificationUri :string
+     BaseUrl :string
      Tenant :string
      ClientId :string
      ClientSecret :string
@@ -37,7 +28,7 @@ module Config =
   let Conf : Settings =
     { AzureConnectionString = LoadConfigValue "AzureConnectionString";
       DaleConnectionString = LoadConfigValue "DaleConnectionString";
-      NotificationUri = LoadConfigValue "NotificationUri";
+      BaseUrl = LoadConfigValue "BaseUrl";
       Tenant = LoadConfigValue "Tenant";
       ClientId = LoadConfigValue "ClientId";
       ClientSecret = LoadConfigValue "ClientSecret";

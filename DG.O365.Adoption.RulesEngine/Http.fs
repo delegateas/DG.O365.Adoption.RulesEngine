@@ -49,24 +49,18 @@ module Http =
     match updateRule  rule  with
       | Result.Success s -> OK ""
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
-  
-  let trigger = warbler(fun _ -> 
-    match triggerJob with
-     | Result.Success _ -> OK ""
-     | Result.Failure f -> BAD_REQUEST "Failed"
-     )
+ 
+
 
   let app :WebPart =
     choose [
       path "/" >=> GET >=> Files.file "static/index.html"
       path "/api/groups" >=> 
-        GET >=> OK (getGraphData "groups" Conf.Tenant Conf.ClientId Conf.ClientSecret);
+        GET >=> request (fun r -> OK (getGraphData "groups" Conf.Tenant Conf.ClientId Conf.ClientSecret));
       path "/api/users" >=> 
-        GET >=> OK (getGraphData "users" Conf.Tenant Conf.ClientId Conf.ClientSecret);
+        GET >=> request (fun r -> OK (getGraphData "users" Conf.Tenant Conf.ClientId Conf.ClientSecret));
       path "/api/testrule" >=>
         POST >=> request (fun r -> (testRule (fromJson r.rawForm)))
-      path "/api/trigger" >=>
-        GET >=> trigger
       path "/api/rules" >=> choose [
         GET >=>  getRules;
         POST >=> request (fun r -> (postRule (fromJson r.rawForm))) ;

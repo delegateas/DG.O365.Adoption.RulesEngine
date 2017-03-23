@@ -23,8 +23,8 @@ namespace DG.O365.Adoption.DispatchJob
         private static HttpClient client = new HttpClient();
         private static string baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
         private static CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-          CloudConfigurationManager.GetSetting("StorageConnectionString"));
-        public static async void ProcessQueueMessage([QueueTrigger("notification-queue")] CloudQueueMessage message, TextWriter log)
+          ConfigurationManager.AppSettings["AzureWebJobsStorage"]);
+        public static async void MessageDispatcherJob([QueueTrigger("notification-queue")] CloudQueueMessage message, TextWriter log)
         {
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
             CloudQueue queue = queueClient.GetQueueReference("notification-queue");
@@ -48,18 +48,18 @@ namespace DG.O365.Adoption.DispatchJob
                     var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                     var byteNotification = new ByteArrayContent(buffer);
                     byteNotification.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    await client.PostAsync(baseUrl + "api/start", byteNotification);
+                    var res= await client.PostAsync(baseUrl+"api/start", byteNotification);
+                    Console.WriteLine("Message sent. Status code is : " + res.StatusCode);
                 }
                 else
                 {
                     status = Status.Queued;
                     var dcount = notificationMsg.DequeueCount;
-                    var updatedNotification = new Notification(notificationMsg.UserId, notificationMsg.Message, notificationMsg.DocumentationLink, notificationMsg.TimeSent, dcount + 1,notificationMsg.RuleName,notificationMsg.Dialog);
+                    var updatedNotification = new Notification(notificationMsg.UserId, notificationMsg.Message, notificationMsg.DocumentationLink, notificationMsg.TimeSent, dcount + 1, notificationMsg.RuleName, notificationMsg.Dialog);
                     var notification = JsonConvert.SerializeObject(updatedNotification);
                     var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                     var delay = 10 * (Math.Pow(dcount + 1, dcount));
                     await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(delay), null, null);
-
                 }
             }
             catch (Exception ex)
@@ -67,6 +67,7 @@ namespace DG.O365.Adoption.DispatchJob
                 var notification = JsonConvert.SerializeObject(notificationMsg);
                 var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                 await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(1), null, null);
+                Console.WriteLine(ex.Message);
                 status = Status.Queued;
             }
             UpdateNotificationHistory(notificationMsg, status);
@@ -79,9 +80,17 @@ namespace DG.O365.Adoption.DispatchJob
         /// <returns></returns>
         private static async Task<bool> CheckAvailablity(string name)
         {
+
             var res = await client.GetAsync(baseUrl + "api/presence?sip=" + name);
-            var content = await res.Content.ReadAsStringAsync();
-            return Boolean.Parse(await res.Content.ReadAsStringAsync());
+            var content = await res.Content.ReadAsStringAsync(); try
+            {
+                return Boolean.Parse(await res.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
         }
 
         /// <summary>

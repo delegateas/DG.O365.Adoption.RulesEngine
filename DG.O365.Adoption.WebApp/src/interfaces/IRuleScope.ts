@@ -15,6 +15,5 @@
         groups: any;
         users: any;
         selectedGroup: any;
-        selectedUser: any;
-
+        selectedUser: any;       
 }}
