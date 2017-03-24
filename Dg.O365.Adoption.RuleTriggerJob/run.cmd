@@ -1,0 +1,1 @@
+Dg.O365.Adoption.RuleTriggerJob.exe

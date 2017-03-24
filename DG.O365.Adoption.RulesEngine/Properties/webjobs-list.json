@@ -1,0 +1,11 @@
+﻿{
+  "$schema": "http://schemastore.org/schemas/json/webjobs-list.json",
+  "WebJobs": [
+    {
+      "filePath": "../DG.O365.Adoption.DispatchJob/DG.O365.Adoption.DispatchJob.csproj"
+    },
+    {
+      "filePath": "../Dg.O365.Adoption.RuleTriggerJob/Dg.O365.Adoption.RuleTriggerJob.csproj"
+    }
+  ]
+}

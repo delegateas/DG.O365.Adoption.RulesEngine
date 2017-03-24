@@ -21,6 +21,7 @@ namespace Dg.O365.Adoption.RuleTriggerJob
             if (config.IsDevelopment)
             {
                 config.UseDevelopmentSettings();
+                config.HostId = "baba";
             }
             config.UseTimers();
 

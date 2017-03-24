@@ -6,7 +6,7 @@ NUGET
       WindowsAzure.Storage (>= 3.1.0.1)
     FSharp.Compiler.Service (2.0.0.6)
     FSharp.Configuration (0.6.4)
-    FSharp.Core (4.0.0.1)
+    FSharp.Core (4.1.0.2)
     FSharp.Data (2.3.2)
       Zlib.Portable (>= 1.11) - framework: >= netstandard11, portable-net45+sl5+win8, portable-net45+win8, portable-net45+win8+wp8+wpa81
     FSPowerPack.Core.Community (3.0)
@@ -38,10 +38,12 @@ NUGET
       Microsoft.Data.OData (5.8.1)
     Microsoft.NETCore.Platforms (1.1) - framework: >= net40, >= netstandard13
     Microsoft.NETCore.Targets (1.1) - framework: >= net40, >= netstandard13
+    Microsoft.Web.WebJobs.Publish (1.0.13)
     Microsoft.Win32.Primitives (4.3) - framework: >= netstandard13
       Microsoft.NETCore.Platforms (>= 1.1) - framework: >= netstandard13
       Microsoft.NETCore.Targets (>= 1.1) - framework: >= netstandard13
       System.Runtime (>= 4.3) - framework: >= netstandard13
+    MSBuild.Microsoft.VisualStudio.Web.targets (14.0.0.3)
     NETStandard.Library (1.6.1) - framework: >= netstandard13
       Microsoft.NETCore.Platforms (>= 1.1) - framework: >= netstandard10
       Microsoft.Win32.Primitives (>= 4.3) - framework: >= net46, >= netstandard13
@@ -466,7 +468,7 @@ NUGET
       System.Security.Cryptography.Primitives (>= 4.3) - framework: >= netstandard13
       System.Text.Encoding (>= 4.3) - framework: >= netstandard13
     System.Security.Cryptography.OpenSsl (4.3) - framework: >= netstandard16
-      runtime.native.System.Security.Cryptography.OpenSsl (>= 4.3)
+      runtime.native.System.Security.Cryptography.OpenSsl (>= 4.3) - framework: >= net463, >= netstandard16, monoandroid, monotouch, xamarinios, xamarinmac
       System.Collections (>= 4.3) - framework: >= netstandard16
       System.IO (>= 4.3) - framework: >= net463, >= netstandard16
       System.Resources.ResourceManager (>= 4.3) - framework: >= netstandard16

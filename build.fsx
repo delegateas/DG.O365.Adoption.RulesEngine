@@ -13,6 +13,7 @@ open System.IO
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 let solutionFile = "DG.O365.Adoption.RulesEngine\DG.O365.Adoption.RulesEngine.fsproj"
 let sqlConn = environVar "RulesSqlConnectionString"
+let webappProj = "./DG.O365.Adoption.RulesEngine/DG.O365.Adoption.RulesEngine.fsproj"
 
 Target "StageWebsiteAssets" (fun _ ->
     let blacklist =
@@ -26,7 +27,7 @@ Target "StageWebsiteAssets" (fun _ ->
     Kudu.stageFolder (Path.GetFullPath @"DG.O365.Adoption.RulesEngine\WebHost") shouldInclude)
 
 Target "BuildSolution" (fun _ ->
-    updateConnectionString "SqlConnectionString" sqlConn "DG.O365.Adoption.RulesEngine\App.config"
+    //updateConnectionString "SqlConnectionString" sqlConn "DG.O365.Adoption.RulesEngine\App.config"
 
     solutionFile
     |> MSBuildHelper.build (fun defaults ->
@@ -38,6 +39,22 @@ Target "BuildSolution" (fun _ ->
     |> ignore)
 
 Target "Deploy" Kudu.kuduSync
+
+Target "MSDeploy" (fun _ ->
+  webappProj
+    |> MSBuildHelper.build (fun defaults ->
+        { defaults with
+            Verbosity = Some Minimal
+            Targets = [ "Build" ]
+            Properties = [ "Configuration", "Release"
+                           "DeployOnBuild", "true"
+                           "PublishProfile", "MSDeploy.pubxml"
+                           "ProjectName", "Dale.Server.MSDeploy"
+                           "ConfigurationName", "Release"
+                           "PackageLocation", "../../build/"
+                           "OutDir", "../../build/"] })
+    |> ignore)
+
 
 "StageWebsiteAssets"
 ==> "BuildSolution"
