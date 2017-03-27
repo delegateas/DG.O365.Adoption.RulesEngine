@@ -4,12 +4,36 @@ var ruleengine;
         function RuleCtrl($scope, ruleService) {
             this.$scope = $scope;
             this.ruleService = ruleService;
+            this.upperPart = 'using Microsoft.Bot.Builder.Dialogs;\nusing Microsoft.Bot.Connector;\nusing System;\nusing System.Threading.Tasks;\n\nnamespace Bot.Dialog\n' +
+                '{\n  [Serializable]\n' +
+                '  public class ExampleDialog : IDialog < object >{\n' +
+                '    public async Task StartAsync(IDialogContext context)\n' +
+                '    {\n      context.Wait(MessageReceivedAsync);\n    }\n\n' +
+                '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable < IMessageActivity > argument)\n' +
+                '    {\n      var message = await argument;\n' +
+                '      await Question1(context, message.Text);\n' +
+                '      return;\n    }\n';
+            this.questionTitle = 'public async Task Question';
+            this.questionYNPart1 = '(IDialogContext context, string text)\n{if (text.toLower() == "yes")\n { string message =';
+            this.questionYNPart2 = ';\n'
+                + 'var prompt = new PromptDialog.PromptConfirm(message, "I didn\'t understand your answer.", 3);'
+                + ' context.Call(prompt, Question' + (this.$scope.questionCount + 1) + ');'
+                + 'return;'
+                + '}'
+                + 'else if (text == "'
+                + '") { await context.PostAsync("'
+                + '");'
+                + 'context.Wait(MessageReceivedAsync);'
+                + '}}';
             $scope.rules = [];
             $scope.newRule = {};
             $scope.editmode = false;
             $scope.isOpen = false;
             $scope.groups = [];
             $scope.users = [];
+            $scope.questionCount = 1;
+            $scope.questions = [{ id: 1, placeholder: "your Question" }];
+            $scope.customDialog = this.upperPart;
             var getGroups = function () {
                 ruleService.getList("groups").then(function (data) {
                     $scope.groups = data.data;
@@ -85,6 +109,28 @@ var ruleengine;
                     });
                 }
             };
+            $scope.testDialog = function (rule) {
+                if (!$scope.testReceiver) {
+                    alert("Please enter the email of the test receiver");
+                }
+                else if (!$scope.testReceiver.match('@')) {
+                    alert("Please enter a valid email address.");
+                }
+                else {
+                    var testData = {
+                        userId: $scope.testReceiver,
+                        message: rule.message,
+                        ruleName: rule.name,
+                        dialog: rule.dialog
+                    };
+                    ruleService.testDialog(testData).then(function () {
+                        alert("test data sent!");
+                    }).catch(function (err) {
+                        alert("Error! Rule has not been added.");
+                        console.log("Error has occured: " + err);
+                    });
+                }
+            };
             var acquireReceiver = function (rule) {
                 if ($scope.selectedGroup != undefined && $scope.selectedGroup.objectId != null) {
                     rule.isGroup = 1;
@@ -106,7 +152,6 @@ var ruleengine;
                     rule = acquireReceiver(rule);
                     ruleService.editRule(rule).then(function () {
                         $scope.cancel();
-                        console.log("changed");
                         alert("Rule \"" + rule.name + "\" has been changed successfully!");
                         load();
                     })
@@ -141,9 +186,9 @@ var ruleengine;
             getGroups();
             getUsers();
         }
+        RuleCtrl.$inject = ['$scope', 'ruleService'];
         return RuleCtrl;
     }());
-    RuleCtrl.$inject = ['$scope', 'ruleService'];
     ruleengine.RuleCtrl = RuleCtrl;
     angular.module('ruleApp', ['ui.bootstrap', 'officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
@@ -201,11 +246,26 @@ var ruleengine;
                 });
                 return promise;
             };
+            this.testDialog = function (testData) {
+                var url = '/api/testdialog';
+                _this.$http.defaults.headers.post = {
+                    'Content-Type': 'application/json'
+                };
+                var promise = _this.$http.post(url, testData).
+                    then(function (data) {
+                    return data;
+                }).
+                    catch(function (errdata) {
+                    return errdata;
+                });
+                return promise;
+            };
         }
+        RuleService.$inject = ['$http'];
         return RuleService;
     }());
-    RuleService.$inject = ['$http'];
     ruleengine.RuleService = RuleService;
     angular.module('ruleApp')
         .service('ruleService', RuleService);
 })(ruleengine || (ruleengine = {}));
+//# sourceMappingURL=script.js.map

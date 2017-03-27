@@ -58,6 +58,21 @@
                 });
             return promise;
         }
+        testDialog = (testData: any) => {
+            var url: string = '/api/testdialog';
+            this.$http.defaults.headers.post = {
+                'Content-Type': 'application/json'
+            }
+            var promise = this.$http.post(url, testData).
+                then(function (data: any) {
+                    return data;
+                }).
+                catch(function (errdata) {
+                    return errdata;
+                });
+            return promise;
+
+        }
 
     }
 

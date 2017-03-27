@@ -21,9 +21,9 @@ namespace DG.O365.Adoption.DispatchJob
     public class MessageProcessController
     {
         private static HttpClient client = new HttpClient();
-        private static string baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
         private static CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["AzureWebJobsStorage"]);
-        public static async void MessageDispatcherJob([QueueTrigger("notification-queue")] CloudQueueMessage message, TextWriter log)
+        private static string baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
+        public static async void DispatchJob([QueueTrigger("notification-queue")] CloudQueueMessage message, TextWriter log)
         {
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
             CloudQueue queue = queueClient.GetQueueReference("notification-queue");

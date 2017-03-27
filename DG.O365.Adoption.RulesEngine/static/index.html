@@ -43,11 +43,29 @@
                 <uif-textfield uif-label="Reducer" required ng-model="newRule.reducer" value="{{newRule.reducer}}" />
             </div>
             <div class="ms-Label">Dialog</div>
-            <textarea  style="height:400px;width:100%" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
+            <div>
+                <uif-textfield uif-label="Reducer" required ng-model="newRule.reducer" value="{{newRule.reducer}}" />
+            </div>
+            <div>
+                <button><i class="ms-Icon ms-Icon--Add"></i></button>
+                <button><i class="ms-Icon ms-Icon--CalculatorSubtract"></i></button>
+            </div>
+            <div>
+                <fieldset ng-repeat="q in questions">
+                    <label>Question {{q.id}}</label>
+                    <input type="text" ng-model="q.yes" placeholder="{{q.yes}}">
+                    <input type="text" ng-model="q.no" placeholder="{{q.no}}">
+                    <input type="text" ng-model="q.text" placeholder="{{q.placeholder}}">
+
+                </fieldset>
+            </div>
+
+            <textarea disabled style="height:400px;width:50%" required ng-model="customDialog" value="{{customDialog}}"></textarea>
+            <textarea  style="height:400px;width:50%" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
             <!--<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>-->
             <div class="ms-Grid">
                 <div class="ms-Grid-row">
-                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md4 ms-u-lg4">
                         <div class="ms-Label">Groups</div>
                         <input type="text" ng-model="selectedGroup"
                                ng-focus="isGroupFocused=true"
@@ -57,7 +75,7 @@
                                placeholder="Search Group"
                                data-typeahead="group as group.displayName for group in groups | filter:$viewValue | limitTo:20">
                     </div>
-                    <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md4 ms-u-lg4">
                         <div class="ms-Label">Users</div>
                         <input type="text" ng-model="selectedUser"
                                placeholder="Search User"
@@ -67,6 +85,11 @@
                                ng-disabled="isGroupFocused"
                                data-typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:20">
                     </div>
+                    <div class="ms-Grid-col ms-u-sm6 ms-u-md4 ms-u-lg4">
+                        <div class="ms-Label">Test Receiver</div>
+                        <input type="text" ng-model="testReceiver"
+                               placeholder="Email address for dialog test">
+                    </div>
                 </div>
             </div>
 
@@ -75,6 +98,7 @@
                 <uif-button style="float:right" ng-click="cancel()">cancel</uif-button>
                 <uif-button uif-type="primary" ng-show="!editmode" style="float:right" ng-click="create(newRule)">create</uif-button>
                 <uif-button ng-show="editmode" uif-type="primary" style="float:right" ng-click="edit(newRule)">edit</uif-button>
+                <uif-button uif-type="primary" style="float:right" ng-click="testDialog(newRule)">test</uif-button>
             </div>
         </div>
 

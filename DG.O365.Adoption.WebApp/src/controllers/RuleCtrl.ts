@@ -4,6 +4,30 @@ module ruleengine {
 
     export class RuleCtrl {
         public static $inject = ['$scope', 'ruleService'];
+        private upperPart: string = 'using Microsoft.Bot.Builder.Dialogs;\nusing Microsoft.Bot.Connector;\nusing System;\nusing System.Threading.Tasks;\n\nnamespace Bot.Dialog\n' +
+        '{\n  [Serializable]\n' +
+        '  public class ExampleDialog : IDialog < object >{\n' +
+        '    public async Task StartAsync(IDialogContext context)\n' +
+        '    {\n      context.Wait(MessageReceivedAsync);\n    }\n\n' +
+        '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable < IMessageActivity > argument)\n' +
+        '    {\n      var message = await argument;\n' +
+        '      await Question1(context, message.Text);\n' +
+        '      return;\n    }\n';
+
+        private questionTitle: string = 'public async Task Question'; //and add number after "Question"
+
+        private questionYNPart1: string = '(IDialogContext context, string text)\n{if (text.toLower() == "yes")\n { string message =';//add question
+
+        private questionYNPart2: string = ';\n' //message line closing
+        + 'var prompt = new PromptDialog.PromptConfirm(message, "I didn\'t understand your answer.", 3);'
+        + ' context.Call(prompt, Question' + (this.$scope.questionCount+1) +');'
+        + 'return;'
+        + '}'
+        + 'else if (text == "'//insert text
+        + '") { await context.PostAsync("'//insert text
+        + '");'
+        + 'context.Wait(MessageReceivedAsync);'
+        + '}}';
 
         constructor(
             private $scope: IRuleScope,
@@ -15,6 +39,9 @@ module ruleengine {
             $scope.isOpen = false;
             $scope.groups = [];
             $scope.users = [];
+            $scope.questionCount = 1;
+            $scope.questions = [{ id: 1, placeholder: "your Question"}];
+            $scope.customDialog = this.upperPart;
 
             var getGroups = () => {
                 ruleService.getList("groups").then((data) => {
@@ -98,6 +125,29 @@ module ruleengine {
                 }
             }
 
+            $scope.testDialog = (rule) => {
+                if (!$scope.testReceiver) {
+                    alert("Please enter the email of the test receiver");
+                }
+                else if (!$scope.testReceiver.match('@')) {
+                    alert("Please enter a valid email address.");
+                }
+                else {
+                    var testData = {
+                        userId: $scope.testReceiver,
+                        message: rule.message,
+                        ruleName: rule.name,
+                        dialog: rule.dialog
+                    }
+                    ruleService.testDialog(testData).then(() => {
+                        alert("test data sent!");
+                    }).catch((err) => {
+                        alert("Error! Rule has not been added.");
+                        console.log("Error has occured: " + err);
+                    });
+                }
+            }
+
             var acquireReceiver = (rule) => {
                 if ($scope.selectedGroup != undefined && $scope.selectedGroup.objectId != null) {
                     rule.isGroup = 1;
@@ -118,7 +168,6 @@ module ruleengine {
                     rule = acquireReceiver(rule);
                     ruleService.editRule(rule).then(() => {
                         $scope.cancel();
-                        console.log("changed")
                         alert("Rule \"" + rule.name + "\" has been changed successfully!");
                         load();
                     })
@@ -152,8 +201,6 @@ module ruleengine {
                     $scope.selectedUser = "";
                 }
             });
-
-
             load();
             getGroups();
             getUsers();

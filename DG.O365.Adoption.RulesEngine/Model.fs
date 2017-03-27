@@ -55,6 +55,17 @@ namespace DG.O365.Adoption.RulesEngine
       RuleName:string
       Dialog:string      
       }
+  [<DataContract>]
+  type TestDialogData =
+     {[<field: DataMember(Name = "userId")>]
+      UserId :UserId
+      [<field: DataMember(Name = "message")>]
+      Message :Message
+      [<field: DataMember(Name = "ruleName")>]
+      RuleName:string
+      [<field: DataMember(Name = "dialog")>]
+      Dialog:string      
+      }
 
   type AuditEvent =
     { [<PartitionKey>] Date :string

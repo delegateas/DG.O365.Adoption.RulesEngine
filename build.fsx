@@ -49,7 +49,7 @@ Target "MSDeploy" (fun _ ->
             Properties = [ "Configuration", "Release"
                            "DeployOnBuild", "true"
                            "PublishProfile", "MSDeploy.pubxml"
-                           "ProjectName", "Dale.Server.MSDeploy"
+                           "ProjectName", "DG.O365.Adoption.RulesEngine.MSDeploy"
                            "ConfigurationName", "Release"
                            "PackageLocation", "../../build/"
                            "OutDir", "../../build/"] })

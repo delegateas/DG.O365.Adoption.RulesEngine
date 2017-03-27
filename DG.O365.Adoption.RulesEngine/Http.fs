@@ -1,6 +1,7 @@
 namespace DG.O365.Adoption.RulesEngine
 
 module Http =
+  open System
   open System.Text
   open Suave
   open Suave.Logging
@@ -50,7 +51,18 @@ module Http =
       | Result.Success s -> OK ""
       | Result.Failure f -> BAD_REQUEST (f |> Array.reduce (+))
  
-
+  let testDialog (n:TestDialogData) =
+    let testNotification:Notification=
+     { UserId = n.UserId;
+       Message =n.Message;
+       DocumentationLink ="";
+       TimeSent = DateTime.UtcNow.ToString("o");
+       DequeueCount=0;
+       RuleName=n.RuleName;
+       Dialog=n.Dialog }
+    match postNotification testNotification with
+     | Result.Success s -> OK ""
+     | Result.Failure f -> BAD_REQUEST(f |> Array.reduce (+))
 
   let app :WebPart =
     choose [
@@ -61,6 +73,8 @@ module Http =
         GET >=> request (fun r -> OK (getGraphData "users" Conf.Tenant Conf.ClientId Conf.ClientSecret));
       path "/api/testrule" >=>
         POST >=> request (fun r -> (testRule (fromJson r.rawForm)))
+      path "/api/testdialog" >=>
+        POST >=> request (fun r -> (testDialog (fromJson r.rawForm)))
       path "/api/rules" >=> choose [
         GET >=>  getRules;
         POST >=> request (fun r -> (postRule (fromJson r.rawForm))) ;

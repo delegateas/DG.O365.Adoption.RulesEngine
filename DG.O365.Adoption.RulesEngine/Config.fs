@@ -3,6 +3,7 @@ namespace DG.O365.Adoption.RulesEngine
 
 module Config =
   open System
+  open System.Configuration
 
   let private env =
     Environment.GetEnvironmentVariables()
@@ -11,11 +12,10 @@ module Config =
     |> dict
 
 
-  let LoadConfigValue v =
-    let appsettings = new Configuration.AppSettingsReader()
-    appsettings.GetValue(v, typeof<string>).ToString()
-
-  
+  let LoadConfigValue (v:string) =
+    let appsettings = new Configuration.AppSettingsReader() 
+    ConfigurationManager.AppSettings.Get(v); 
+      
   type Settings =
    { AzureConnectionString :string
      DaleConnectionString :string

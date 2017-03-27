@@ -4,6 +4,6 @@
         addRule(rule: any): ng.IPromise<any>
         editRule(rule: any): ng.IPromise<any>
         deleteRule(rule: any): ng.IPromise<any>
-       
+        testDialog(rule: any): ng.IPromise<any>       
     }
 } 
