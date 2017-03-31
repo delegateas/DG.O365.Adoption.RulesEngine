@@ -3,45 +3,57 @@
 module ruleengine {
 
     export class RuleCtrl {
-        public static $inject = ['$scope', 'ruleService'];
-        private upperPart: string = 'using Microsoft.Bot.Builder.Dialogs;\nusing Microsoft.Bot.Connector;\nusing System;\nusing System.Threading.Tasks;\n\nnamespace Bot.Dialog\n' +
-        '{\n  [Serializable]\n' +
-        '  public class ExampleDialog : IDialog < object >{\n' +
-        '    public async Task StartAsync(IDialogContext context)\n' +
-        '    {\n      context.Wait(MessageReceivedAsync);\n    }\n\n' +
-        '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable < IMessageActivity > argument)\n' +
-        '    {\n      var message = await argument;\n' +
-        '      await Question1(context, message.Text);\n' +
-        '      return;\n    }\n';
+        public static $inject = ['$scope', 'ruleService', 'ruleTemplateService'];
 
-        private questionTitle: string = 'public async Task Question'; //and add number after "Question"
-
-        private questionYNPart1: string = '(IDialogContext context, string text)\n{if (text.toLower() == "yes")\n { string message =';//add question
-
-        private questionYNPart2: string = ';\n' //message line closing
-        + 'var prompt = new PromptDialog.PromptConfirm(message, "I didn\'t understand your answer.", 3);'
-        + ' context.Call(prompt, Question' + (this.$scope.questionCount+1) +');'
-        + 'return;'
-        + '}'
-        + 'else if (text == "'//insert text
-        + '") { await context.PostAsync("'//insert text
-        + '");'
-        + 'context.Wait(MessageReceivedAsync);'
-        + '}}';
 
         constructor(
             private $scope: IRuleScope,
-            private ruleService: IRuleService
+            private ruleService: IRuleService,
+            private ruleTemplateService: IRuleTemplateService
         ) {
+            var defaultQuestion: Question = { Id: 1, Choices: [{ ChoiceValue: "Yes", Text: "Do you want to know more about this?", NextQuestionNo: 0 }, { ChoiceValue: "No", Text: "All right! Have a good day!", NextQuestionNo: 0 }] };
+
             $scope.rules = [];
             $scope.newRule = {};
             $scope.editmode = false;
             $scope.isOpen = false;
             $scope.groups = [];
             $scope.users = [];
-            $scope.questionCount = 1;
-            $scope.questions = [{ id: 1, placeholder: "your Question"}];
-            $scope.customDialog = this.upperPart;
+            $scope.questions = [];
+            $scope.questions.push(defaultQuestion);
+            var currentQno: number = 1;
+
+            $scope.addChoice = (question: Question) => {
+                question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
+            }
+
+            $scope.appendDialog = () => {
+                $scope.customDialog = ruleTemplateService.getQuestionTemplate($scope.questions);
+
+            }
+
+            $scope.addQuestion = (choice: Choice) => {
+                currentQno += 1;
+                choice.NextQuestionNo = currentQno;
+                var nextQuestion: Question = { Id: currentQno, Choices: [{ ChoiceValue: "", Text: "", NextQuestionNo: 0 }, { ChoiceValue: "", Text: "", NextQuestionNo: 0 }] };
+                $scope.questions.push(nextQuestion);
+            }
+
+            $scope.removeQuestion = (choice: Choice) => {
+
+                var qNumber = choice.NextQuestionNo;
+                choice.NextQuestionNo = 0;
+                for (var i = 0; i < $scope.questions.length; i++) {
+                    for (var k = 0; k < $scope.questions[i].Choices.length; k++) {
+                        if ($scope.questions[i].Choices[k].NextQuestionNo == qNumber) {
+                            $scope.questions[i].Choices[k].NextQuestionNo = 0;
+                        }
+                    }
+                    if ($scope.questions[i].Id == qNumber) {
+                        $scope.questions.splice(i, 1);
+                    }
+                }
+            }
 
             var getGroups = () => {
                 ruleService.getList("groups").then((data) => {
@@ -86,7 +98,7 @@ module ruleengine {
             }
 
             $scope.toEditmode = (rule) => {
-                console.log(rule)
+
                 $scope.isOpen = true;
                 $scope.editmode = !$scope.editmode;
                 $scope.newRule = angular.copy(rule);
@@ -201,12 +213,13 @@ module ruleengine {
                     $scope.selectedUser = "";
                 }
             });
+
             load();
             getGroups();
             getUsers();
         }
-    }
 
+    }
     angular.module('ruleApp', ['ui.bootstrap', 'officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
 }

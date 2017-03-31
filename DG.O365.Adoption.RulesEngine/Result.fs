@@ -1,6 +1,7 @@
 ﻿namespace DG.O365.Adoption.RulesEngine
 
 module Result =
+  open Microsoft.ApplicationInsights
 
   type Result<'TSuccess,'TFailure> =
     | Success of 'TSuccess
@@ -19,14 +20,17 @@ module Result =
 
 
   type Error = string[]
-
-
+  
   let tryCatch fn arg :Result<'T, Error> =
     try
       fn arg |> Success
     with
-      | ex -> Failure [|ex.Message|]
-
+      | ex ->
+         let insights =TelemetryClient()
+         insights.TrackException(ex.InnerException)
+         Failure [|ex.Message|] 
+          
+      
 
   let lift f1 f2 x =
     match f1 x with

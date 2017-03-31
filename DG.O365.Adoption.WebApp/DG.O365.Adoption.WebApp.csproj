@@ -52,7 +52,10 @@
   <ItemGroup>
     <TypeScriptCompile Include="src\interfaces\IRuleScope.ts" />
     <TypeScriptCompile Include="src\controllers\RuleCtrl.ts" />
+    <TypeScriptCompile Include="src\interfaces\IRuleTemplateService.ts" />
     <TypeScriptCompile Include="src\interfaces\IRuleService.ts" />
+    <TypeScriptCompile Include="src\models\models.ts" />
+    <TypeScriptCompile Include="src\services\RuleTemplateService.ts" />
     <TypeScriptCompile Include="src\services\RuleService.ts" />
     <TypeScriptCompile Include="src\typings\angular-route.d.ts" />
     <TypeScriptCompile Include="src\typings\angular.d.ts" />

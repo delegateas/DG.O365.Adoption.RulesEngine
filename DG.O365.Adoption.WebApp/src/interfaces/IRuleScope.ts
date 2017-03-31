@@ -18,7 +18,10 @@
         selectedGroup: any;
         selectedUser: any;       
         testReceiver: string;
-        questionCount: number;
-        questions: any[];
+        addQuestion(choice: Choice): void;
+        removeQuestion(choice: Choice): void;
+        addChoice(question: Question): void;
+        questions: Question[];
         customDialog: string;
+        appendDialog(): void;      
 }}

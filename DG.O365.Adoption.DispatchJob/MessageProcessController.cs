@@ -15,6 +15,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage.Table;
 using DG.O365.Adoption.RulesEngine;
+using Microsoft.ApplicationInsights;
 
 namespace DG.O365.Adoption.DispatchJob
 {
@@ -63,6 +64,7 @@ namespace DG.O365.Adoption.DispatchJob
             }
             catch (Exception ex)
             {
+                new TelemetryClient().TrackException(ex.InnerException);
                 var notification = JsonConvert.SerializeObject(notificationMsg);
                 var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                 await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(1), null, null);
@@ -87,6 +89,7 @@ namespace DG.O365.Adoption.DispatchJob
             }
             catch (Exception ex)
             {
+                new TelemetryClient().TrackException(ex.InnerException);
                 Console.WriteLine(ex.Message);
                 return false;
             }
@@ -99,19 +102,25 @@ namespace DG.O365.Adoption.DispatchJob
         /// <param name="status"></param>
         private static void UpdateNotificationHistory(Notification notification, Status status)
         {
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-            CloudTable table = tableClient.GetTableReference("NotificationHistory");
-            table.CreateIfNotExists();
-
-            TableOperation retrieveOperation = TableOperation.Retrieve<NotificationHistoryEntity>(notification.UserId, notification.TimeSent);
-            TableResult retrievedResult = table.Execute(retrieveOperation);
-            NotificationHistoryEntity updateEntity = (NotificationHistoryEntity)retrievedResult.Result;
-            if (updateEntity != null)
+            try
             {
-                updateEntity.Status = Enum.GetName(typeof(Status), status);
-                updateEntity.TimeSent = DateTime.UtcNow.ToString("o");
-                TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
-                table.Execute(insertOrReplaceOperation);
+                CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+                CloudTable table = tableClient.GetTableReference("NotificationHistory");
+                table.CreateIfNotExists();
+
+                TableOperation retrieveOperation = TableOperation.Retrieve<NotificationHistoryEntity>(notification.UserId, notification.TimeSent);
+                TableResult retrievedResult = table.Execute(retrieveOperation);
+                NotificationHistoryEntity updateEntity = (NotificationHistoryEntity)retrievedResult.Result;
+                if (updateEntity != null)
+                {
+                    updateEntity.Status = Enum.GetName(typeof(Status), status);
+                    updateEntity.TimeSent = DateTime.UtcNow.ToString("o");
+                    TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(updateEntity);
+                    table.Execute(insertOrReplaceOperation);
+                }
+            }
+            catch (Exception ex) {
+                new TelemetryClient().TrackException(ex.InnerException);
             }
         }
     }

@@ -46,22 +46,44 @@
             <div>
                 <uif-textfield uif-label="Reducer" required ng-model="newRule.reducer" value="{{newRule.reducer}}" />
             </div>
-            <div>
-                <button><i class="ms-Icon ms-Icon--Add"></i></button>
-                <button><i class="ms-Icon ms-Icon--CalculatorSubtract"></i></button>
-            </div>
-            <div>
-                <fieldset ng-repeat="q in questions">
-                    <label>Question {{q.id}}</label>
-                    <input type="text" ng-model="q.yes" placeholder="{{q.yes}}">
-                    <input type="text" ng-model="q.no" placeholder="{{q.no}}">
-                    <input type="text" ng-model="q.text" placeholder="{{q.placeholder}}">
 
+            <div>
+                <fieldset>
+                    <span ng-repeat="q in questions">
+                        <label style="margin-right:25px;font-size:larger"><b>Question {{q.Id}}</b></label>
+                        
+                        <label style="margin-left:10px; margin-right:10px; display:inline-block">Choices</label><button ng-click="addChoice(q)"><i class="ms-Icon ms-Icon--Add"></i>Add choice option</button><br />
+                        <span style="margin-left:10px" ng-repeat="c in q.Choices">
+                            <input type="text" style="display:inline-block;" ng-model="c.ChoiceValue" placeholder="Choice value">
+                            <input type="text" ng-model="c.Text" placeholder="Text for choice"><button  ng-if="c.NextQuestionNo==0" ng-click="addQuestion(c)"><i class="ms-Icon ms-Icon--Add"></i>Add question to this choice</button>
+                            <button ng-if="c.NextQuestionNo!=0" ng-click="removeQuestion(c)"><i class="ms-Icon ms-Icon--Delete"></i>Remove question to this choice</button><span ng-if="c.NextQuestionNo!=0">(Next question after this choice is Question{{c.NextQuestionNo}})</span>
+                            <br />
+                        </span>
+                    </span>
                 </fieldset>
+                <div>
+                    <button ng-click="appendDialog()">Completed</button>
+
+                </div>
+                <!--<fieldset ng-repeat="q in questions">
+                    <label>Question {{q.id}}</label>
+                    <span ng-repeat="c in q.choices">
+                        <input type="text" ng-model="q.yText" placeholder="Text when user answer with Yes"><br />
+                        <input type="text" ng-model="q1.nText" placeholder="Text when user answer with No"><br />
+                        <input type="text" ng-model="addingChoice.choice" placeholder="Option"><input type="text" ng-model="addingChoice.text" placeholder="Text when this option is chosen">
+                        <button ng-click="addChoice(q1.choices, addingChoice)">Add option</button><br />
+
+                    </span>
+                    <input type="text" ng-model="q.text" placeholder="Text when user answer with Yes"><br />
+                    <input type="text" ng-model="q1.nText" placeholder="Text when user answer with No"><br />
+                    <input type="text" ng-model="addingChoice" placeholder="Option"><button ng-click="addChoice(q1.choices, addingChoice)">Add option</button>
+
+
+                </fieldset>-->
             </div>
 
             <textarea disabled style="height:400px;width:50%" required ng-model="customDialog" value="{{customDialog}}"></textarea>
-            <textarea  style="height:400px;width:50%" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
+            <textarea style="height:400px;width:50%" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
             <!--<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>-->
             <div class="ms-Grid">
                 <div class="ms-Grid-row">
