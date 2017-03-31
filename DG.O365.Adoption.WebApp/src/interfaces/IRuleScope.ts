@@ -22,6 +22,5 @@
         removeQuestion(choice: Choice): void;
         addChoice(question: Question): void;
         questions: Question[];
-        customDialog: string;
         appendDialog(): void;      
 }}

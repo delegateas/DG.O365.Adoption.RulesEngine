@@ -15,6 +15,7 @@ module Http =
   open FSharp.Data
   open FSharp.Data.HttpRequestHeaders
 
+
   open Config
   open Engine
   open Storage
@@ -62,8 +63,8 @@ module Http =
        Dialog=n.Dialog }
     match postNotification testNotification with
      | Result.Success s -> OK ""
-     | Result.Failure f -> BAD_REQUEST(f |> Array.reduce (+))
-
+     | Result.Failure f -> BAD_REQUEST(f |> Array.reduce (+))    
+  
   let app :WebPart =
     choose [
       path "/" >=> GET >=> Files.file "static/index.html"

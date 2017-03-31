@@ -19,7 +19,7 @@ var ruleengine;
                 question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
             };
             $scope.appendDialog = function () {
-                $scope.customDialog = ruleTemplateService.getQuestionTemplate($scope.questions);
+                $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
             };
             $scope.addQuestion = function (choice) {
                 currentQno += 1;

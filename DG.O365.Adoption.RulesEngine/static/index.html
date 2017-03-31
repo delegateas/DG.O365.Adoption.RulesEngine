@@ -42,13 +42,10 @@
             <div>
                 <uif-textfield uif-label="Reducer" required ng-model="newRule.reducer" value="{{newRule.reducer}}" />
             </div>
-            <div class="ms-Label">Dialog</div>
-            <div>
-                <uif-textfield uif-label="Reducer" required ng-model="newRule.reducer" value="{{newRule.reducer}}" />
-            </div>
-
-            <div>
-                <fieldset>
+            <div class="ms-Label"><b>Dialog</b></div>
+            <span>Edit dialog manually </span><input type="checkbox" ng-model="developerMode" /><br /> 
+            <div ng-hide="developerMode">
+                <fieldset >
                     <span ng-repeat="q in questions">
                         <label style="margin-right:25px;font-size:larger"><b>Question {{q.Id}}</b></label>
                         
@@ -63,27 +60,10 @@
                 </fieldset>
                 <div>
                     <button ng-click="appendDialog()">Completed</button>
-
                 </div>
-                <!--<fieldset ng-repeat="q in questions">
-                    <label>Question {{q.id}}</label>
-                    <span ng-repeat="c in q.choices">
-                        <input type="text" ng-model="q.yText" placeholder="Text when user answer with Yes"><br />
-                        <input type="text" ng-model="q1.nText" placeholder="Text when user answer with No"><br />
-                        <input type="text" ng-model="addingChoice.choice" placeholder="Option"><input type="text" ng-model="addingChoice.text" placeholder="Text when this option is chosen">
-                        <button ng-click="addChoice(q1.choices, addingChoice)">Add option</button><br />
-
-                    </span>
-                    <input type="text" ng-model="q.text" placeholder="Text when user answer with Yes"><br />
-                    <input type="text" ng-model="q1.nText" placeholder="Text when user answer with No"><br />
-                    <input type="text" ng-model="addingChoice" placeholder="Option"><button ng-click="addChoice(q1.choices, addingChoice)">Add option</button>
-
-
-                </fieldset>-->
             </div>
-
-            <textarea disabled style="height:400px;width:50%" required ng-model="customDialog" value="{{customDialog}}"></textarea>
-            <textarea style="height:400px;width:50%" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
+            
+            <textarea style="height:400px;width:50%" ng-disabled="!developerMode" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
             <!--<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>-->
             <div class="ms-Grid">
                 <div class="ms-Grid-row">

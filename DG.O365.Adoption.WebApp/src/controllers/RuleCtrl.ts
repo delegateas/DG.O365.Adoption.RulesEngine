@@ -28,7 +28,7 @@ module ruleengine {
             }
 
             $scope.appendDialog = () => {
-                $scope.customDialog = ruleTemplateService.getQuestionTemplate($scope.questions);
+                $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
 
             }
 
