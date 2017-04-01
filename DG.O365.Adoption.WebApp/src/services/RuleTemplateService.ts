@@ -13,23 +13,30 @@
                 if (question.Id == 1) {
 
                     temp += '    ' + this.questionTitle + '1(IDialogContext context, string text)\n'
-                    '    {\n';
+                        + '    {\n';
                 }
                 else {
                     temp += '    ' + this.questionTitle + question.Id + '(IDialogContext context, IAwaitable<string> answer){\n'
                         + '    var text = await answer;\n';
+
                 }
                 for (var i = 0; i < question.Choices.length; i++) {
                     var choice = question.Choices[i];
+
                     if (i != 0) {
                         temp += '    else';
                     }
+                    else {
+                        temp += '    var message="";\n';
+                    }
                     var choiceValLower = choice.ChoiceValue.toLowerCase();
-                    temp += '    if (text.toLower() == "' + choiceValLower + '") \n'
-                        + '    {\n    string message ="' + choice.Text + '";\n';
+                    temp += '    if (text.ToLower() == "' + choiceValLower + '") \n'
+                        + '    {\n'
+                        + ' message = "' + choice.Text + '"; ';
 
                     if (choice.NextQuestionNo > 0) {
                         var nextQ = this.findNextQuestion(questions, choice.NextQuestionNo);
+
                         var choiceStr = '';
                         if (nextQ != null) {
                             for (var j = 0; j < nextQ.Choices.length; j++) {
@@ -62,17 +69,18 @@
                 }
                 temp += '  }\n\n';
             }
-            temp += '}';
+            temp += '}\n}';
             return temp;
         }
 
         findNextQuestion = (questions: Question[], nextQId: number): Question => {
+            var nQuestion = null;
             angular.forEach(questions, (value: Question, key: number) => {
                 if (value.Id == nextQId) {
-                    return value;
+                    nQuestion = value;
                 }
             });
-            return null;
+            return nQuestion;
         }
 
         private questionTitle: string = 'public async Task Question';

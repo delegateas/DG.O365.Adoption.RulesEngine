@@ -284,8 +284,8 @@ var ruleengine;
                 for (var k = 0; k < questions.length; k++) {
                     var question = questions[k];
                     if (question.Id == 1) {
-                        temp += '    ' + _this.questionTitle + '1(IDialogContext context, string text)\n';
-                        '    {\n';
+                        temp += '    ' + _this.questionTitle + '1(IDialogContext context, string text)\n'
+                            + '    {\n';
                     }
                     else {
                         temp += '    ' + _this.questionTitle + question.Id + '(IDialogContext context, IAwaitable<string> answer){\n'
@@ -296,9 +296,13 @@ var ruleengine;
                         if (i != 0) {
                             temp += '    else';
                         }
+                        else {
+                            temp += '    var message="";\n';
+                        }
                         var choiceValLower = choice.ChoiceValue.toLowerCase();
-                        temp += '    if (text.toLower() == "' + choiceValLower + '") \n'
-                            + '    {\n    string message ="' + choice.Text + '";\n';
+                        temp += '    if (text.ToLower() == "' + choiceValLower + '") \n'
+                            + '    {\n'
+                            + ' message = "' + choice.Text + '"; ';
                         if (choice.NextQuestionNo > 0) {
                             var nextQ = _this.findNextQuestion(questions, choice.NextQuestionNo);
                             var choiceStr = '';
@@ -328,16 +332,17 @@ var ruleengine;
                     }
                     temp += '  }\n\n';
                 }
-                temp += '}';
+                temp += '}\n}';
                 return temp;
             };
             this.findNextQuestion = function (questions, nextQId) {
+                var nQuestion = null;
                 angular.forEach(questions, function (value, key) {
                     if (value.Id == nextQId) {
-                        return value;
+                        nQuestion = value;
                     }
                 });
-                return null;
+                return nQuestion;
             };
             this.questionTitle = 'public async Task Question';
             this.upperPart = 'using Microsoft.Bot.Builder.Dialogs;\nusing Microsoft.Bot.Connector;\nusing System;\nusing System.Threading.Tasks;\n\nnamespace Bot.Dialog\n' +
