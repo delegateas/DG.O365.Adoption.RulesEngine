@@ -26,6 +26,10 @@ module ruleengine {
             $scope.addChoice = (question: Question) => {
                 question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
             }
+            $scope.removeChoice = (question: Question, index:number) => {
+                question.Choices.splice(index, 1); 
+              
+            }
 
             $scope.appendDialog = () => {
                 $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);

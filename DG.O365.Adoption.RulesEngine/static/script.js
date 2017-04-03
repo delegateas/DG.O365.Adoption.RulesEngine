@@ -18,6 +18,9 @@ var ruleengine;
             $scope.addChoice = function (question) {
                 question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
             };
+            $scope.removeChoice = function (question, index) {
+                question.Choices.splice(index, 1);
+            };
             $scope.appendDialog = function () {
                 $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
             };
@@ -192,9 +195,9 @@ var ruleengine;
             getGroups();
             getUsers();
         }
-        RuleCtrl.$inject = ['$scope', 'ruleService', 'ruleTemplateService'];
         return RuleCtrl;
     }());
+    RuleCtrl.$inject = ['$scope', 'ruleService', 'ruleTemplateService'];
     ruleengine.RuleCtrl = RuleCtrl;
     angular.module('ruleApp', ['ui.bootstrap', 'officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
@@ -267,9 +270,9 @@ var ruleengine;
                 return promise;
             };
         }
-        RuleService.$inject = ['$http'];
         return RuleService;
     }());
+    RuleService.$inject = ['$http'];
     ruleengine.RuleService = RuleService;
     angular.module('ruleApp')
         .service('ruleService', RuleService);
@@ -361,4 +364,3 @@ var ruleengine;
     angular.module('ruleApp')
         .service('ruleTemplateService', RuleTemplateService);
 })(ruleengine || (ruleengine = {}));
-//# sourceMappingURL=script.js.map

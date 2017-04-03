@@ -51,6 +51,7 @@
                         
                         <label style="margin-left:10px; margin-right:10px; display:inline-block">Choices</label><button ng-click="addChoice(q)"><i class="ms-Icon ms-Icon--Add"></i>Add choice option</button><br />
                         <span style="margin-left:10px" ng-repeat="c in q.Choices">
+                            <button ng-disabled="$index==0" title="{{ $index==0 ? 'You cannot remove this choice' : 'Remove choice'}}" ng-click="removeChoice(q,$index)">X</button>
                             <input type="text" style="display:inline-block;" ng-model="c.ChoiceValue" placeholder="Choice value">
                             <input type="text" ng-model="c.Text" placeholder="Text for choice"><button  ng-if="c.NextQuestionNo==0" ng-click="addQuestion(c)"><i class="ms-Icon ms-Icon--Add"></i>Add question to this choice</button>
                             <button ng-if="c.NextQuestionNo!=0" ng-click="removeQuestion(c)"><i class="ms-Icon ms-Icon--Delete"></i>Remove question to this choice</button><span ng-if="c.NextQuestionNo!=0">(Next question after this choice is Question{{c.NextQuestionNo}})</span>
