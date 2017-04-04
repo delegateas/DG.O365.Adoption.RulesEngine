@@ -21,14 +21,15 @@ module ruleengine {
             $scope.users = [];
             $scope.questions = [];
             $scope.questions.push(defaultQuestion);
+            $scope.selectedGroup = $scope.selectedUser = "";
             var currentQno: number = 1;
 
             $scope.addChoice = (question: Question) => {
                 question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
             }
-            $scope.removeChoice = (question: Question, index:number) => {
-                question.Choices.splice(index, 1); 
-              
+            $scope.removeChoice = (question: Question, index: number) => {
+                question.Choices.splice(index, 1);
+
             }
 
             $scope.appendDialog = () => {
@@ -124,7 +125,7 @@ module ruleengine {
             }
 
             $scope.create = (rule) => {
-                if ($scope.selectedGroup.objectId == null && $scope.selectedUser.objectId == null) {
+                if ($scope.selectedGroup.objectId == undefined && $scope.selectedUser.objectId == undefined) {
                     alert("Please select at least one group or user")
                 }
                 else {
@@ -178,6 +179,7 @@ module ruleengine {
             }
 
             $scope.edit = (rule) => {
+
                 if (($scope.selectedGroup == undefined || $scope.selectedGroup.objectId == null) && ($scope.selectedUser == undefined || $scope.selectedUser.objectId == null)) {
                     alert("Please select at least one group or user")
                 } else {

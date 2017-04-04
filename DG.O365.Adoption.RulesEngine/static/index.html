@@ -3,17 +3,18 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Rule Engine Administration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
     <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/js/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.14.0/ngOfficeUiFabric.min.js"></script>
     <script src="script.js"></script>
-
     <script src="monaco/vs/loader.js"></script>
+
     <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.min.css">
     <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.components.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css">
+
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -27,82 +28,91 @@
             <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Add"></i>Add Rule</span>
         </uif-button>
         <div ng-show="isOpen">
-            <div>
-                <uif-textfield uif-label="Name" ng-disabled="editmode" name="input" required pattern="[a-zA-Z0-9]" ng-model="newRule.name" value="{{newRule.name}}" />
-            </div>
-            <div>
-                <uif-textfield uif-label="Documentation link" required ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}" />
-            </div>
-            <div>
-                <uif-textfield uif-label="Message" required ng-model="newRule.message" value="{{newRule.message}}" />
-            </div>
-            <div>
-                <uif-textfield uif-label="Query" required ng-model="newRule.query" value="{{newRule.query}}" />
-            </div>
-            <div>
-                <uif-textfield uif-label="Reducer" required ng-model="newRule.reducer" value="{{newRule.reducer}}" />
-            </div>
-            <div class="ms-Label"><b>Dialog</b></div>
-            <span>Edit dialog manually </span><input type="checkbox" ng-model="developerMode" /><br /> 
-            <div ng-hide="developerMode">
-                <fieldset >
-                    <span ng-repeat="q in questions">
-                        <label style="margin-right:25px;font-size:larger"><b>Question {{q.Id}}</b></label>
-                        
-                        <label style="margin-left:10px; margin-right:10px; display:inline-block">Choices</label><button ng-click="addChoice(q)"><i class="ms-Icon ms-Icon--Add"></i>Add choice option</button><br />
-                        <span style="margin-left:10px" ng-repeat="c in q.Choices">
-                            <button ng-disabled="$index==0" title="{{ $index==0 ? 'You cannot remove this choice' : 'Remove choice'}}" ng-click="removeChoice(q,$index)">X</button>
-                            <input type="text" style="display:inline-block;" ng-model="c.ChoiceValue" placeholder="Choice value">
-                            <input type="text" ng-model="c.Text" placeholder="Text for choice"><button  ng-if="c.NextQuestionNo==0" ng-click="addQuestion(c)"><i class="ms-Icon ms-Icon--Add"></i>Add question to this choice</button>
-                            <button ng-if="c.NextQuestionNo!=0" ng-click="removeQuestion(c)"><i class="ms-Icon ms-Icon--Delete"></i>Remove question to this choice</button><span ng-if="c.NextQuestionNo!=0">(Next question after this choice is Question{{c.NextQuestionNo}})</span>
-                            <br />
+            <form name="notificationForm">
+                <div class="ms-TextField">
+                    <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Name</b></div><span ng-show="notificationForm.rulename.$invalid" style="color:red; font-size:small">*</span>
+                    <input class="ms-TextField-field" ng-disabled="editmode" style="height:32px" name="rulename" ng-required="true" ng-model="newRule.name" value="{{newRule.name}}" required type="text">
+                </div>
+                <div class="ms-TextField">
+                    <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Documentation link</b></div><span ng-show="notificationForm.link.$invalid" style="color:red; font-size:small">*</span>
+                    <input class="ms-TextField-field" style="height:32px" name="link" ng-required="true" ng-model="newRule.documentationLink" value="{{newRule.documentationLink}}" required type="text">
+                </div>
+                <div class="ms-TextField">
+                    <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Message</b></div><span ng-show="notificationForm.message.$invalid" style="color:red; font-size:small">*</span>
+                    <input class="ms-TextField-field" style="height:32px" name="message" ng-required="true" ng-model="newRule.message" value="{{newRule.message}}" required type="text">
+                </div>
+                <div class="ms-TextField">
+                    <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Query</b></div><span ng-show="notificationForm.query.$invalid" style="color:red; font-size:small">*</span>
+                    <input class="ms-TextField-field" style="height:32px" name="query" ng-required="true" ng-model="newRule.query" value="{{newRule.query}}" required type="text">
+                </div>
+                <div class="ms-TextField">
+                    <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Reducer</b></div>
+                    <input class="ms-TextField-field" style="height:32px" name="reducer" ng-model="newRule.reducer" value="{{newRule.reducer}}" type="text">
+                </div>
+                <div class="ms-Label"><b>Dialog</b></div>
+                <span>Edit dialog manually </span><input type="checkbox" ng-model="developerMode" /><br />
+                <div ng-hide="developerMode">
+                    <fieldset>
+                        <span ng-repeat="q in questions">
+                            <label style="margin-right:25px;font-size:larger"><b>Question {{q.Id}}</b></label>
+
+                            <label style="margin-left:10px; margin-right:10px; display:inline-block">Choices</label><button ng-click="addChoice(q)"><i class="ms-Icon ms-Icon--Add"></i>Add choice option</button><br />
+                            <span style="margin-left:10px" ng-repeat="c in q.Choices">
+                                <button ng-disabled="$index==0" title="{{ $index==0 ? 'You cannot remove this choice' : 'Remove choice'}}" ng-click="removeChoice(q,$index)">X</button>
+                                <input type="text" style="display:inline-block;" ng-model="c.ChoiceValue" placeholder="Choice value">
+                                <input type="text" ng-model="c.Text" placeholder="Text for choice"><button ng-if="c.NextQuestionNo==0" ng-click="addQuestion(c)"><i class="ms-Icon ms-Icon--Add"></i>Add question to this choice</button>
+                                <button ng-if="c.NextQuestionNo!=0" ng-click="removeQuestion(c)"><i class="ms-Icon ms-Icon--Delete"></i>Remove question to this choice</button><span ng-if="c.NextQuestionNo!=0">(Next question after this choice is Question{{c.NextQuestionNo}})</span>
+                                <br />
+                            </span>
                         </span>
-                    </span>
-                </fieldset>
+                    </fieldset>
+                    <div>
+                        <button ng-click="appendDialog()">Completed</button>
+                    </div>
+                </div>
+                <span ng-show="notificationForm.dialog.$invalid" style="display:block; color:red; font-size:small">*</span>
+                <textarea style="height:400px;width:50%" name="dialog" ng-disabled="!developerMode" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
+                <!--<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>-->
                 <div>
-                    <button ng-click="appendDialog()">Completed</button>
+                    <div class="ms-Label">Test Receiver</div>
+                    <input type="text" ng-model="testReceiver"
+                           placeholder="Email address for dialog test">
+                    <uif-button uif-type="primary" ng-click="testDialog(newRule)">test</uif-button>
                 </div>
-            </div>
-            
-            <textarea style="height:400px;width:50%" ng-disabled="!developerMode" required ng-model="newRule.dialog" value="{{newRule.dialog}}"></textarea>
-            <!--<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>-->
-            <div class="ms-Grid">
-                <div class="ms-Grid-row">
-                    <div class="ms-Grid-col ms-u-sm6 ms-u-md4 ms-u-lg4">
-                        <div class="ms-Label">Groups</div>
-                        <input type="text" ng-model="selectedGroup"
-                               ng-focus="isGroupFocused=true"
-                               ng-blur="isGroupFocused=false"
-                               ng-disabled="isUserFocused"
-                               typeaheadSelectOnExact=true
-                               placeholder="Search Group"
-                               data-typeahead="group as group.displayName for group in groups | filter:$viewValue | limitTo:20">
-                    </div>
-                    <div class="ms-Grid-col ms-u-sm6 ms-u-md4 ms-u-lg4">
-                        <div class="ms-Label">Users</div>
-                        <input type="text" ng-model="selectedUser"
-                               placeholder="Search User"
-                               ng-focus="isUserFocused=true"
-                               ng-blur="isUserFocused=false"
-                               typeaheadSelectOnExact=true
-                               ng-disabled="isGroupFocused"
-                               data-typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:20">
-                    </div>
-                    <div class="ms-Grid-col ms-u-sm6 ms-u-md4 ms-u-lg4">
-                        <div class="ms-Label">Test Receiver</div>
-                        <input type="text" ng-model="testReceiver"
-                               placeholder="Email address for dialog test">
+                <div class="ms-Grid">
+                    <div class="ms-Grid-row">
+                        <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
+                            <div class="ms-Label">Groups</div>
+                            <input type="text" ng-model="selectedGroup"
+                                   ng-focus="isGroupFocused=true"
+                                   ng-blur="isGroupFocused=false"
+                                   ng-disabled="isUserFocused"
+                                   typeaheadSelectOnExact=true
+                                   placeholder="Search Group"
+                                   data-typeahead="group as group.displayName for group in groups | filter:$viewValue | limitTo:20">
+                        </div>
+                        <div class="ms-Grid-col ms-u-sm6 ms-u-md6 ms-u-lg6">
+                            <div class="ms-Label">Users</div>
+                            <input type="text" ng-model="selectedUser"
+                                   placeholder="Search User"
+                                   ng-focus="isUserFocused=true"
+                                   ng-blur="isUserFocused=false"
+                                   typeaheadSelectOnExact=true
+                                   ng-disabled="isGroupFocused"
+                                   data-typeahead="user as user.displayName for user in users | filter:$viewValue | limitTo:20">
+                        </div>
                     </div>
                 </div>
-            </div>
 
 
-            <div>
-                <uif-button style="float:right" ng-click="cancel()">cancel</uif-button>
-                <uif-button uif-type="primary" ng-show="!editmode" style="float:right" ng-click="create(newRule)">create</uif-button>
-                <uif-button ng-show="editmode" uif-type="primary" style="float:right" ng-click="edit(newRule)">edit</uif-button>
-                <uif-button uif-type="primary" style="float:right" ng-click="testDialog(newRule)">test</uif-button>
-            </div>
+                <div>
+ 
+                    <uif-button style="margin-left:10px;float:right" ng-click="cancel()">cancel</uif-button>
+                    <uif-button uif-type="primary" ng-show="!editmode" style="margin-left:10px;float:right" ng-click="create(newRule)">create</uif-button>
+                    <uif-button ng-show="editmode" uif-type="primary" style="margin-left:10px;float:right" ng-click="edit(newRule)">edit</uif-button>
+
+                </div>
+            </form>
         </div>
 
         <uif-table ng-show="!editmode">

@@ -17,7 +17,7 @@ module Config =
     ConfigurationManager.AppSettings.Get(v); 
       
   type Settings =
-   { AzureConnectionString :string
+   { RuleEngineConnectionString :string
      DaleConnectionString :string
      BaseUrl :string
      Tenant :string
@@ -26,7 +26,7 @@ module Config =
      Resource :string }
 
   let Conf : Settings =
-    { AzureConnectionString = LoadConfigValue "AzureConnectionString";
+    { RuleEngineConnectionString = LoadConfigValue "RuleEngineConnectionString";
       DaleConnectionString = LoadConfigValue "DaleConnectionString";
       BaseUrl = LoadConfigValue "BaseUrl";
       Tenant = LoadConfigValue "Tenant";

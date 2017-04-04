@@ -9,3 +9,4 @@ nuget FSharp.Compiler.Service == 2.0.0.6
 nuget Yaaf.FSharp.Scripting
 nuget Microsoft.Web.WebJobs.Publish
 nuget MSBuild.Microsoft.VisualStudio.Web.targets
+nuget Microsoft.ApplicationInsights

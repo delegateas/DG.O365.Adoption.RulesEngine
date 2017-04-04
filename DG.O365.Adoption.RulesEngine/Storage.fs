@@ -18,7 +18,7 @@ module Storage =
   open Result
 
   let fetchAccount =
-    let conn = Conf.AzureConnectionString
+    let conn = Conf.RuleEngineConnectionString
     CloudStorageAccount.Parse conn
   let fetchDaleAccount =
     let conn = Conf.DaleConnectionString
@@ -113,6 +113,11 @@ module Storage =
     |> Seq.map (fun s -> s.Replace("Audit", ""))
     |> Seq.toList
 
+  let tryGetKey (col :DynamicTableEntity) key =
+     try
+      col.Item(key).ToString()
+     with
+      | _ -> null
 
   let fromAuditTable user query =
     let io (user, query) =
@@ -124,12 +129,12 @@ module Storage =
       |> Seq.map (fun e ->
                    { Date = e.PartitionKey;
                      Id = e.RowKey;
-                     ServiceType = e.Item("ServiceType").ToString();
-                     Operation = e.Item("Operation").ToString();
-                     Status = e.Item("Result").ToString();
-                     Time = e.Item("Time").ToString();
-                     ObjectId = e.Item("ObjectId").ToString();
-                     Json = e.Item("Json").ToString() })
+                     ServiceType = tryGetKey e "ServiceType";
+                     Operation = tryGetKey e "Operation";
+                     Status = tryGetKey e "Result";
+                     Time = tryGetKey e "Time";
+                     ObjectId = tryGetKey e "ObjectId";
+                     Json = tryGetKey e "Json"; })
       |> Seq.toArray
     (user, query) |> tryCatch io
 

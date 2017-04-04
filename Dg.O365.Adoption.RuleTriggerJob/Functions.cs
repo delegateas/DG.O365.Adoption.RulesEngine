@@ -8,11 +8,12 @@ namespace Dg.O365.Adoption.RuleTriggerJob
     {
         public static void RuleTriggerJob([TimerTrigger("* */5 * * * *", RunOnStartup = true)] TimerInfo timer)
         {
-            try { DG.O365.Adoption.RulesEngine.Engine.trigger();
+            try {
+                DG.O365.Adoption.RulesEngine.Engine.trigger();
                 Console.WriteLine("success");
             }
             catch (Exception ex) {
-                new TelemetryClient().TrackException(ex.InnerException);
+                new TelemetryClient().TrackException(ex);
                 Console.WriteLine(ex.Message);
             }
 

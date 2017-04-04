@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using System.Diagnostics;
+using System.Configuration;
 
 namespace Dg.O365.Adoption.RuleTriggerJob
 {
@@ -16,7 +17,7 @@ namespace Dg.O365.Adoption.RuleTriggerJob
         public static void Main()
         {
             var config = new JobHostConfiguration();
-            config.Tracing.ConsoleLevel = TraceLevel.Verbose;
+            config.Tracing.ConsoleLevel = TraceLevel.Verbose;            
 
             if (config.IsDevelopment)
             {

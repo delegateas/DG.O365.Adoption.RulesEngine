@@ -22,7 +22,7 @@ namespace DG.O365.Adoption.DispatchJob
     public class MessageProcessController
     {
         private static HttpClient client = new HttpClient();
-        private static CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["AzureWebJobsStorage"]);
+        private static CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["AzureWebJobsStorage"].ConnectionString);
         private static string baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
         public static async void DispatchJob([QueueTrigger("notification-queue")] CloudQueueMessage message, TextWriter log)
         {
@@ -33,8 +33,6 @@ namespace DG.O365.Adoption.DispatchJob
             Notification notificationMsg = JsonConvert.DeserializeObject<Notification>(message.AsString);
             try
             {
-
-
                 var isUserOnline = await CheckAvailablity(notificationMsg.UserId);
                 if (notificationMsg.DequeueCount > 5)
                 {
@@ -60,6 +58,7 @@ namespace DG.O365.Adoption.DispatchJob
                     var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                     var delay = 10 * (Math.Pow(dcount + 1, dcount));
                     await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(delay), null, null);
+                    UpdateNotificationHistory(notificationMsg, status);
                 }
             }
             catch (Exception ex)
@@ -70,10 +69,11 @@ namespace DG.O365.Adoption.DispatchJob
                 await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(1), null, null);
                 Console.WriteLine(ex.Message);
                 status = Status.Queued;
+                UpdateNotificationHistory(notificationMsg, status);
             }
-            UpdateNotificationHistory(notificationMsg, status);
 
         }
+
         /// <summary>
         /// Check presence of the user through UCWA
         /// </summary>

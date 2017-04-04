@@ -17,6 +17,9 @@ module Engine =
   let Script_Input = "input"
 
   let (|Prefixed|_|) (p:string) (s:string) =
+    match s with 
+    | null -> None
+    | _ -> 
     if s.StartsWith(p) then
         Some(s)
     else
@@ -57,9 +60,10 @@ module Engine =
 
   let evalRule r set :Result<bool, Error> =
     match r.Reducer with
+    | null -> Success (Array.isEmpty set)
+    | "" -> Success (Array.isEmpty set)
     | Prefixed "https://" url  -> fetchScript >=> execF set <| url
     | Prefixed "http://" url -> fetchScript >=> execF set <| url
-    | "" -> Success (Array.isEmpty set)
     | _ -> execF set r.Reducer
 
 

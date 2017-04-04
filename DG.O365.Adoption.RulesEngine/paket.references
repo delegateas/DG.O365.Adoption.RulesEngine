@@ -4,3 +4,4 @@ Suave
 FSharp.Azure.Storage
 FSharp.Configuration
 Yaaf.FSharp.Scripting
+Microsoft.ApplicationInsights

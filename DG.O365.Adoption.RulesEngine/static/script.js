@@ -14,6 +14,7 @@ var ruleengine;
             $scope.users = [];
             $scope.questions = [];
             $scope.questions.push(defaultQuestion);
+            $scope.selectedGroup = $scope.selectedUser = "";
             var currentQno = 1;
             $scope.addChoice = function (question) {
                 question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
@@ -102,7 +103,7 @@ var ruleengine;
                 return returnval;
             };
             $scope.create = function (rule) {
-                if ($scope.selectedGroup.objectId == null && $scope.selectedUser.objectId == null) {
+                if ($scope.selectedGroup.objectId == undefined && $scope.selectedUser.objectId == undefined) {
                     alert("Please select at least one group or user");
                 }
                 else {
@@ -195,9 +196,9 @@ var ruleengine;
             getGroups();
             getUsers();
         }
+        RuleCtrl.$inject = ['$scope', 'ruleService', 'ruleTemplateService'];
         return RuleCtrl;
     }());
-    RuleCtrl.$inject = ['$scope', 'ruleService', 'ruleTemplateService'];
     ruleengine.RuleCtrl = RuleCtrl;
     angular.module('ruleApp', ['ui.bootstrap', 'officeuifabric.core', 'officeuifabric.components', 'officeuifabric.components.table'])
         .controller('ruleCtrl', RuleCtrl);
@@ -270,9 +271,9 @@ var ruleengine;
                 return promise;
             };
         }
+        RuleService.$inject = ['$http'];
         return RuleService;
     }());
-    RuleService.$inject = ['$http'];
     ruleengine.RuleService = RuleService;
     angular.module('ruleApp')
         .service('ruleService', RuleService);
@@ -364,3 +365,4 @@ var ruleengine;
     angular.module('ruleApp')
         .service('ruleTemplateService', RuleTemplateService);
 })(ruleengine || (ruleengine = {}));
+//# sourceMappingURL=script.js.map

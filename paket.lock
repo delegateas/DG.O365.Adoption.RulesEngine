@@ -12,8 +12,9 @@ NUGET
     FSPowerPack.Core.Community (3.0)
     FSPowerPack.Linq.Community (3.0)
       FSPowerPack.Core.Community
+    Microsoft.ApplicationInsights (2.2)
     Microsoft.Azure.KeyVault.Core (2.0.4) - framework: >= net40, wpv8.0
-    Microsoft.CSharp (4.3) - framework: >= net40, >= netstandard13
+     Microsoft.CSharp (4.3) - framework: >= net40, >= netstandard13
       System.Collections (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Diagnostics.Debug (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Dynamic.Runtime (>= 4.3) - framework: dnxcore50, netstandard10, >= netstandard13
@@ -36,6 +37,7 @@ NUGET
       System.Spatial (5.8.1)
     Microsoft.Data.Services.Client (5.8.1) - framework: >= net40, >= netstandard13
       Microsoft.Data.OData (5.8.1)
+    Microsoft.Diagnostics.Tracing.EventSource.Redist (1.1.28) - framework: net40
     Microsoft.NETCore.Platforms (1.1) - framework: >= net40, >= netstandard13
     Microsoft.NETCore.Targets (1.1) - framework: >= net40, >= netstandard13
     Microsoft.Web.WebJobs.Publish (1.0.13)
@@ -529,7 +531,7 @@ NUGET
       System.Collections (>= 4.3) - framework: dnxcore50, >= netstandard16
       System.Globalization (>= 4.3) - framework: dnxcore50, >= netstandard16
       System.Resources.ResourceManager (>= 4.3) - framework: dnxcore50, >= netstandard16
-      System.Runtime (>= 4.3) - framework: dnxcore50, netstandard10, netstandard13, >= netstandard16
+     System.Runtime (>= 4.3) - framework: dnxcore50, netstandard10, netstandard13, >= netstandard16
       System.Runtime.Extensions (>= 4.3) - framework: dnxcore50, >= netstandard16
       System.Threading (>= 4.3) - framework: dnxcore50, >= netstandard16
     System.Threading (4.3) - framework: >= net40, >= netstandard13
@@ -543,7 +545,7 @@ NUGET
       System.Collections (>= 4.3) - framework: >= netstandard10
       System.Runtime (>= 4.3) - framework: >= netstandard10
       System.Threading.Tasks (>= 4.3) - framework: >= netstandard10
-    System.Threading.Timer (4.3) - framework: >= netstandard13
+     System.Threading.Timer (4.3) - framework: >= netstandard13
       Microsoft.NETCore.Platforms (>= 1.1) - framework: dnxcore50, >= netstandard12
       Microsoft.NETCore.Targets (>= 1.1) - framework: dnxcore50, >= netstandard12
       System.Runtime (>= 4.3) - framework: dnxcore50, >= netstandard12
