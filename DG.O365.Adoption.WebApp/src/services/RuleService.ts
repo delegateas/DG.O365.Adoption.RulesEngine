@@ -28,7 +28,8 @@
                     return data;
                 }).
                 catch(function (errdata) {
-                    return errdata;
+                    console.log("failed")
+                    throw errdata;
                 });
             return promise;
         }
@@ -41,7 +42,7 @@
                     return data;
                 }).
                 catch(function (errdata) {
-                    return errdata;
+                    throw errdata;
                 });
             return promise;
 
@@ -54,7 +55,7 @@
                     return data;
                 }).
                 catch(function (errdata) {
-                    return errdata;
+                    throw errdata;
                 });
             return promise;
         }
@@ -68,7 +69,7 @@
                     return data;
                 }).
                 catch(function (errdata) {
-                    return errdata;
+                    throw errdata;
                 });
             return promise;
 

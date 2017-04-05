@@ -12,10 +12,13 @@ var ruleengine;
             $scope.isOpen = false;
             $scope.groups = [];
             $scope.users = [];
-            $scope.questions = [];
-            $scope.questions.push(defaultQuestion);
             $scope.selectedGroup = $scope.selectedUser = "";
+            $scope.showCode = false;
             var currentQno = 1;
+            var fillDefaultQuestion = function () {
+                $scope.questions = [];
+                $scope.questions.push(defaultQuestion);
+            };
             $scope.addChoice = function (question) {
                 question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
             };
@@ -54,12 +57,14 @@ var ruleengine;
                 });
             };
             var load = function () {
+                fillDefaultQuestion();
                 ruleService.getList("rules").then(function (data) {
                     $scope.rules = data.data;
                 }).catch(function (err) {
                     alert("Error! Failed to load rules.");
                     console.log("Error has occured: " + err);
                 });
+                $scope.isQuestionDirty = false;
             };
             var getUsers = function () {
                 ruleService.getList("users").then(function (data) {
@@ -81,6 +86,13 @@ var ruleengine;
                 $scope.editmode = false;
                 $scope.newRule = {};
                 $scope.selectedGroup = $scope.selectedUser = "";
+                fillDefaultQuestion();
+                $scope.isQuestionDirty = false;
+                $scope.isOpen = false;
+                $scope.showCode = false;
+            };
+            $scope.toggleShowCode = function () {
+                $scope.showCode = !$scope.showCode;
             };
             $scope.toEditmode = function (rule) {
                 $scope.isOpen = true;
@@ -103,6 +115,7 @@ var ruleengine;
                 return returnval;
             };
             $scope.create = function (rule) {
+                console.log(rule);
                 if ($scope.selectedGroup.objectId == undefined && $scope.selectedUser.objectId == undefined) {
                     alert("Please select at least one group or user");
                 }
@@ -192,6 +205,11 @@ var ruleengine;
                     $scope.selectedUser = "";
                 }
             });
+            $scope.$watch('questions', function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $scope.isQuestionDirty = true;
+                }
+            }, true);
             load();
             getGroups();
             getUsers();
@@ -228,7 +246,8 @@ var ruleengine;
                     return data;
                 }).
                     catch(function (errdata) {
-                    return errdata;
+                    console.log("failed");
+                    throw errdata;
                 });
                 return promise;
             };
@@ -240,7 +259,7 @@ var ruleengine;
                     return data;
                 }).
                     catch(function (errdata) {
-                    return errdata;
+                    throw errdata;
                 });
                 return promise;
             };
@@ -252,7 +271,7 @@ var ruleengine;
                     return data;
                 }).
                     catch(function (errdata) {
-                    return errdata;
+                    throw errdata;
                 });
                 return promise;
             };
@@ -266,7 +285,7 @@ var ruleengine;
                     return data;
                 }).
                     catch(function (errdata) {
-                    return errdata;
+                    throw errdata;
                 });
                 return promise;
             };
@@ -351,7 +370,7 @@ var ruleengine;
             this.questionTitle = 'public async Task Question';
             this.upperPart = 'using Microsoft.Bot.Builder.Dialogs;\nusing Microsoft.Bot.Connector;\nusing System;\nusing System.Threading.Tasks;\n\nnamespace Bot.Dialog\n' +
                 '{\n  [Serializable]\n' +
-                '  public class ExampleDialog : IDialog < object >{\n' +
+                '  public class ExampleDialog : IDialog<object> {\n' +
                 '    public async Task StartAsync(IDialogContext context)\n' +
                 '    {\n      context.Wait(MessageReceivedAsync);\n    }\n\n' +
                 '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable < IMessageActivity > argument)\n' +

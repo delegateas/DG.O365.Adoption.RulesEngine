@@ -4,7 +4,7 @@ namespace DG.O365.Adoption.RulesEngine
   open System.Runtime.Serialization
   open FSharp.Azure.Storage.Table
 
-  type DocumentationLink = string
+  type Title = string
   type Message = string
   type UserId = string // Assumed an email at this time
 
@@ -16,8 +16,8 @@ namespace DG.O365.Adoption.RulesEngine
   [<DataContract>]
   type Rule =
     { [<PartitionKey>]
-      [<field: DataMember(Name = "documentationLink")>]
-      DocumentationLink :DocumentationLink
+      [<field: DataMember(Name = "title")>]
+      Title :Title
       [<RowKey>]
       [<field: DataMember(Name = "name")>]
       Name :string
@@ -49,7 +49,7 @@ namespace DG.O365.Adoption.RulesEngine
   type Notification =
     { UserId :UserId
       Message :Message
-      DocumentationLink :DocumentationLink 
+      Title :Title 
       TimeSent:string
       DequeueCount:int
       RuleName:string
@@ -59,6 +59,8 @@ namespace DG.O365.Adoption.RulesEngine
   type TestDialogData =
      {[<field: DataMember(Name = "userId")>]
       UserId :UserId
+      [<field: DataMember(Name = "title")>]
+      Title:Title      
       [<field: DataMember(Name = "message")>]
       Message :Message
       [<field: DataMember(Name = "ruleName")>]

@@ -19,11 +19,14 @@ module ruleengine {
             $scope.isOpen = false;
             $scope.groups = [];
             $scope.users = [];
-            $scope.questions = [];
-            $scope.questions.push(defaultQuestion);
             $scope.selectedGroup = $scope.selectedUser = "";
+            $scope.showCode = false;
             var currentQno: number = 1;
 
+            var fillDefaultQuestion = () => {
+                $scope.questions = [];
+                $scope.questions.push(defaultQuestion);
+            }
             $scope.addChoice = (question: Question) => {
                 question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
             }
@@ -33,8 +36,8 @@ module ruleengine {
             }
 
             $scope.appendDialog = () => {
-                $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
 
+                $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
             }
 
             $scope.addQuestion = (choice: Choice) => {
@@ -70,12 +73,14 @@ module ruleengine {
             }
 
             var load = () => {
+                fillDefaultQuestion();
                 ruleService.getList("rules").then((data) => {
                     $scope.rules = data.data;
                 }).catch((err) => {
                     alert("Error! Failed to load rules.");
                     console.log("Error has occured: " + err);
                 });
+                $scope.isQuestionDirty = false;
             };
 
             var getUsers = () => {
@@ -100,8 +105,14 @@ module ruleengine {
                 $scope.editmode = false;
                 $scope.newRule = {};
                 $scope.selectedGroup = $scope.selectedUser = "";
+                fillDefaultQuestion();
+                $scope.isQuestionDirty = false;
+                $scope.isOpen = false;
+                $scope.showCode = false;
             }
-
+            $scope.toggleShowCode = () => {
+                $scope.showCode = !$scope.showCode;
+            }
             $scope.toEditmode = (rule) => {
 
                 $scope.isOpen = true;
@@ -125,6 +136,7 @@ module ruleengine {
             }
 
             $scope.create = (rule) => {
+                console.log(rule)
                 if ($scope.selectedGroup.objectId == undefined && $scope.selectedUser.objectId == undefined) {
                     alert("Please select at least one group or user")
                 }
@@ -219,10 +231,17 @@ module ruleengine {
                     $scope.selectedUser = "";
                 }
             });
+            $scope.$watch('questions', (newValue: any, oldValue: any) => {
+                if (newValue != oldValue) {
+
+                    $scope.isQuestionDirty = true;
+                }
+            }, true);
 
             load();
             getGroups();
             getUsers();
+
         }
 
     }

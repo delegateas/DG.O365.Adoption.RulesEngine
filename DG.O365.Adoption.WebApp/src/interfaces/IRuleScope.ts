@@ -24,4 +24,7 @@
         questions: Question[];
         appendDialog(): void;
         removeChoice(question: Question, index: number): void;    
+        toggleShowCode(): void;
+        showCode: boolean;
+        isQuestionDirty: boolean;
 }}

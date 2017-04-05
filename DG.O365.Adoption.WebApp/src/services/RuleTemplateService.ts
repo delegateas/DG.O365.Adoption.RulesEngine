@@ -87,7 +87,7 @@
 
         private upperPart: string = 'using Microsoft.Bot.Builder.Dialogs;\nusing Microsoft.Bot.Connector;\nusing System;\nusing System.Threading.Tasks;\n\nnamespace Bot.Dialog\n' +
         '{\n  [Serializable]\n' +
-        '  public class ExampleDialog : IDialog < object >{\n' +
+        '  public class ExampleDialog : IDialog<object> {\n' +
         '    public async Task StartAsync(IDialogContext context)\n' +
         '    {\n      context.Wait(MessageReceivedAsync);\n    }\n\n' +
         '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable < IMessageActivity > argument)\n' +

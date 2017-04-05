@@ -73,7 +73,7 @@ module Engine =
   // `io` is the side effect to perform when the rule returns true.
   let handleRule io (toUser :string)  (forUser :string) (r :Rule) =
     let timeSent= DateTime.UtcNow.ToString("o")
-    let notification:Notification = { DocumentationLink = r.DocumentationLink;
+    let notification:Notification = { Title = r.Title;
                          UserId = toUser;
                          Message = r.Message;
                          TimeSent = timeSent;

@@ -36,12 +36,16 @@ module Storage =
 
 
   let addRule (rule :Rule)=
+    let reducer=
+     match rule.Reducer with
+     | null -> ""
+     | _ -> rule.Reducer
     let io (ctx :sql.dataContext) =
       let row = ctx.Dbo.Rules.Create()
       row.Name <- rule.Name
-      row.DocumentationLink <- rule.DocumentationLink
+      row.Title <- rule.Title
       row.Query <- rule.Query
-      row.Reducer <- rule.Reducer
+      row.Reducer <- reducer
       row.Message <- rule.Message
       row.ReceiverObjectId <- rule.ReceiverObjectId
       row.ReceiverName <- rule.ReceiverName
@@ -62,7 +66,7 @@ module Storage =
   let updateRule (rule :Rule) =
     let io (ctx :sql.dataContext) =
      let originalRule=ctx.Dbo.Rules |> Seq.find(fun x ->x.Name.Equals(rule.Name))
-     originalRule.DocumentationLink <- rule.DocumentationLink
+     originalRule.Title <- rule.Title
      originalRule.Query <- rule.Query
      originalRule.Reducer <- rule.Reducer
      originalRule.Message <- rule.Message
