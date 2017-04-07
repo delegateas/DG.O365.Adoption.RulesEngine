@@ -1,10 +1,11 @@
 var ruleengine;
 (function (ruleengine) {
     var RuleCtrl = (function () {
-        function RuleCtrl($scope, ruleService, ruleTemplateService) {
+        function RuleCtrl($scope, ruleService, ruleTemplateService, $timeout) {
             this.$scope = $scope;
             this.ruleService = ruleService;
             this.ruleTemplateService = ruleTemplateService;
+            this.$timeout = $timeout;
             var defaultQuestion = { Id: 1, Choices: [{ ChoiceValue: "Yes", Text: "Do you want to know more about this?", NextQuestionNo: 0 }, { ChoiceValue: "No", Text: "All right! Have a good day!", NextQuestionNo: 0 }] };
             $scope.rules = [];
             $scope.newRule = {};
@@ -14,6 +15,23 @@ var ruleengine;
             $scope.users = [];
             $scope.selectedGroup = $scope.selectedUser = "";
             $scope.showCode = false;
+            $scope.showRuleAlert = false;
+            $scope.showSentAlert = false;
+            $scope.createNewDialog = false;
+            $scope.ruleAlert = "";
+            $scope.queries = [
+                "Operation eq 'SharingSet'",
+                "Operation eq 'UserLoggedIn'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileAccessed'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileUploaded'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileCheckedIn' or Operation eq 'FileCheckedOut'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileCopied'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileSyncDownloadedPartial' or Operation eq 'FileSyncDownloadedFull'",
+                "ServiceType eq 'Yammer' and Operation eq 'FileCreated'",
+                "ServiceType eq 'Yammer' and Operation eq 'GroupCreation'",
+                "ServiceType eq 'PowerBI' and Operation eq 'ViewReport'",
+                "ServiceType eq 'PowerBI' and Operation eq 'CreateDashboard'"
+            ];
             var currentQno = 1;
             var fillDefaultQuestion = function () {
                 $scope.questions = [];
@@ -24,9 +42,6 @@ var ruleengine;
             };
             $scope.removeChoice = function (question, index) {
                 question.Choices.splice(index, 1);
-            };
-            $scope.appendDialog = function () {
-                $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
             };
             $scope.addQuestion = function (choice) {
                 currentQno += 1;
@@ -64,7 +79,6 @@ var ruleengine;
                     alert("Error! Failed to load rules.");
                     console.log("Error has occured: " + err);
                 });
-                $scope.isQuestionDirty = false;
             };
             var getUsers = function () {
                 ruleService.getList("users").then(function (data) {
@@ -87,7 +101,7 @@ var ruleengine;
                 $scope.newRule = {};
                 $scope.selectedGroup = $scope.selectedUser = "";
                 fillDefaultQuestion();
-                $scope.isQuestionDirty = false;
+                $scope.createNewDialog = false;
                 $scope.isOpen = false;
                 $scope.showCode = false;
             };
@@ -123,7 +137,9 @@ var ruleengine;
                     rule = acquireReceiver(rule);
                     ruleService.addRule(rule).then(function () {
                         $scope.cancel();
-                        alert("Rule \"" + rule.name + "\" has been added successfully!");
+                        $scope.ruleAlert = "Rule \"" + rule.name + "\" has been added successfully!";
+                        $scope.showRuleAlert = true;
+                        $timeout(function () { $scope.showRuleAlert = false; }, 3000);
                         load();
                         $scope.selectedGroup = $scope.selectedUser = "";
                     }).catch(function (err) {
@@ -147,9 +163,10 @@ var ruleengine;
                         dialog: rule.dialog
                     };
                     ruleService.testDialog(testData).then(function () {
-                        alert("test data sent!");
+                        $scope.showSentAlert = true;
+                        $timeout(function () { $scope.showSentAlert = false; }, 3000);
                     }).catch(function (err) {
-                        alert("Error! Rule has not been added.");
+                        alert("Error! Test data has not been sent.");
                         console.log("Error has occured: " + err);
                     });
                 }
@@ -175,7 +192,9 @@ var ruleengine;
                     rule = acquireReceiver(rule);
                     ruleService.editRule(rule).then(function () {
                         $scope.cancel();
-                        alert("Rule \"" + rule.name + "\" has been changed successfully!");
+                        $scope.ruleAlert = "Rule \"" + rule.name + "\" has been changed successfully!";
+                        $scope.showRuleAlert = true;
+                        $timeout(function () { $scope.showRuleAlert = false; }, 3000);
                         load();
                     })
                         .catch(function (err) {
@@ -187,7 +206,9 @@ var ruleengine;
             $scope.delete = function (rule) {
                 ruleService.deleteRule(rule).then(function () {
                     $scope.cancel();
-                    alert("Rule \"" + rule.name + "\" has been deleted successfully!");
+                    $scope.ruleAlert = "Rule \"" + rule.name + "\" has been deleted successfully!";
+                    $scope.showRuleAlert = true;
+                    $timeout(function () { $scope.showRuleAlert = false; }, 3000);
                     load();
                 })
                     .catch(function (err) {
@@ -207,14 +228,14 @@ var ruleengine;
             });
             $scope.$watch('questions', function (newValue, oldValue) {
                 if (newValue != oldValue) {
-                    $scope.isQuestionDirty = true;
+                    $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
                 }
             }, true);
             load();
             getGroups();
             getUsers();
         }
-        RuleCtrl.$inject = ['$scope', 'ruleService', 'ruleTemplateService'];
+        RuleCtrl.$inject = ['$scope', 'ruleService', 'ruleTemplateService', '$timeout'];
         return RuleCtrl;
     }());
     ruleengine.RuleCtrl = RuleCtrl;
@@ -323,7 +344,7 @@ var ruleengine;
                             temp += '    var message="";\n';
                         }
                         var choiceValLower = choice.ChoiceValue.toLowerCase();
-                        temp += '    if (text.ToLower() == "' + choiceValLower + '") \n'
+                        temp += '    if (text.ToLower().Contains( "' + choiceValLower + '")) \n'
                             + '    {\n'
                             + ' message = "' + choice.Text + '"; ';
                         if (choice.NextQuestionNo > 0) {
@@ -335,7 +356,7 @@ var ruleengine;
                                 }
                                 choiceStr = choiceStr.substr(1);
                                 temp += '    string[] choices = {' + choiceStr + '};\n'
-                                    + '    var prompt = new PromptDialog.PromptChoice<string>(choices, message, "I didn\'t understand your answer.", 3);\n'
+                                    + '    var prompt = new PromptDialog.PromptString(message, "I didn\'t understand your answer.", 3);\n'
                                     + '    context.Call(prompt, Question' + choice.NextQuestionNo + ');\n'
                                     + '    return;\n'
                                     + '    }\n';
@@ -347,12 +368,10 @@ var ruleengine;
                                 + '    }\n';
                         }
                     }
-                    if (questions[k].Id == 1) {
-                        temp += '    else\n    {\n'
-                            + '    await context.PostAsync("Sorry, I didn\'t understand your answer"); \n'
-                            + '    context.Wait(MessageReceivedAsync);\n'
-                            + '    }\n';
-                    }
+                    temp += '    else\n    {\n'
+                        + '    await context.PostAsync("Sorry, I didn\'t understand your answer"); \n'
+                        + '    context.Wait(MessageReceivedAsync);\n'
+                        + '    }\n';
                     temp += '  }\n\n';
                 }
                 temp += '}\n}';
@@ -373,7 +392,7 @@ var ruleengine;
                 '  public class ExampleDialog : IDialog<object> {\n' +
                 '    public async Task StartAsync(IDialogContext context)\n' +
                 '    {\n      context.Wait(MessageReceivedAsync);\n    }\n\n' +
-                '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable < IMessageActivity > argument)\n' +
+                '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable <IMessageActivity> argument)\n' +
                 '    {\n      var message = await argument;\n' +
                 '      await Question1(context, message.Text);\n' +
                 '      return;\n    }\n';

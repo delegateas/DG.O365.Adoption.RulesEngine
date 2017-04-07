@@ -24,9 +24,10 @@
     <div class="ms-Grid-col ms-u-md10 ms-u-lg10">
         <h1 class="ms-font-su">Rule Administration</h1>
 
-        <uif-button ng-hide="isOpen" ng-click="open()" uif-type="hero">
+        <uif-button ng-hide="isOpen" ng-click="open()" uif-type="hero" style="display:inline-block">
             <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Add"></i> Add Rule</span>
         </uif-button>
+        <span style="vertical-align: -webkit-baseline-middle;color:red" ng-show="showRuleAlert">{{ruleAlert}}</span>
         <div ng-show="isOpen">
 
             <form name="notificationForm">
@@ -44,51 +45,57 @@
                         <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Initial Message</b></div><span ng-show="notificationForm.message.$invalid" style="color:red; font-size:small">*</span>
                         <input class="ms-TextField-field" style="height:32px" name="message" ng-required="true" ng-model="newRule.message" value="{{newRule.message}}" required type="text">
                     </div>
-                    <div class="ms-TextField">
-                        <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Query</b></div><span ng-show="notificationForm.query.$invalid" style="color:red; font-size:small">*</span>
-                        <input class="ms-TextField-field" style="height:32px" name="query" ng-required="true" ng-model="newRule.query" value="{{newRule.query}}" required type="text">
-                    </div>
-                    <div class="ms-TextField">
-                        <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Reducer</b></div>
-                        <input class="ms-TextField-field" style="height:32px" name="reducer" ng-model="newRule.reducer" value="{{newRule.reducer}}" type="text">
-                    </div>
-                </fieldset>
+                    <div >
+                        <div class="ms-Label" style="display:inline-block;margin-right:10px;font-size:14px"><b>Query</b></div><span ng-show="notificationForm.query.$invalid" style="color:red; font-size:small">*</span><br />
+                                <select style="color:black;width:100%" required name="query" ng-select="newRule.query" ng-model="newRule.query">
+                                    <option value="">---Please select---</option>
+                                    <option ng-repeat="que in queries" value="{{que}}">{{que}}</option>
+                                </select>
+                        </div>
+
+                        <div class="ms-TextField ms-TextField--multiline">
+                            <div class="ms-Label" style="display:inline-block;margin-right:10px"><b>Reducer</b></div>
+                            <textarea class="ms-TextField-field" style="height:32px" name="reducer" ng-model="newRule.reducer" value="{{newRule.reducer}}"></textarea>
+                        </div>
+</fieldset>
                 <fieldset>
                     <legend>Rule Dialog</legend>
 
                     <div>
-                        <fieldset ng-hide="developerMode">
+                       
+                        <fieldset ng-hide="developerMode||(editmode&&!createNewDialog)">
                             <span ng-repeat="q in questions">
                                 <label style="margin-right:25px;font-size:larger"><b>Question {{q.Id}}</b></label>
 
                                 <label style="margin-left:10px; margin-right:10px; display:inline-block">Choices</label>
 
-                                <button ng-click="addChoice(q)"  type="button" style="display:inline-block" class="ms-Button ms-Button--hero">
+                                <button ng-click="addChoice(q)" type="button" style="display:inline-block" class="ms-Button ms-Button--hero">
                                     <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Add"></i></span>
                                     <span class="ms-Button-label" style="font-size:12px"> Add choice option</span>
                                 </button>
                                 <br />
                                 <span style="margin-left:10px" ng-repeat="c in q.Choices">
-                                    <button ng-disabled="$index==0"  type="button"  title="{{ $index==0 ? 'You cannot remove this choice' : 'Remove choice'}}" ng-click="removeChoice(q,$index)"><i class="ms-Icon ms-Icon--Delete"></i></button>
+                                    <button ng-disabled="$index==0" type="button" title="{{ $index==0 ? 'You cannot remove this choice' : 'Remove choice'}}" ng-click="removeChoice(q,$index)"><i class="ms-Icon ms-Icon--Delete"></i></button>
                                     <input type="text" style="display:inline-block; margin-bottom:3px" ng-model="c.ChoiceValue" placeholder="Choice value">
                                     <input type="text" style="margin-bottom:3px" ng-model="c.Text" placeholder="Text for choice">
                                     <button ng-if="c.NextQuestionNo==0" ng-click="addQuestion(c)" type="button" style="display:inline-block" class="ms-Button ms-Button--hero">
                                         <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Add"></i></span>
                                         <span class="ms-Button-label" style="font-size:12px"> Add question to this choice</span>
                                     </button>
-                                    <button ng-if="c.NextQuestionNo!=0" ng-click="removeQuestion(c)"  type="button"  style="display:inline-block" class="ms-Button ms-Button--hero">
+                                    <button ng-if="c.NextQuestionNo!=0" ng-click="removeQuestion(c)" type="button" style="display:inline-block" class="ms-Button ms-Button--hero">
                                         <span class="ms-Button-icon"><i class="ms-Icon ms-Icon--Delete"></i></span>
                                         <span class="ms-Button-label" style="font-size:12px"> Remove question to this choice</span>
                                     </button><span ng-if="c.NextQuestionNo!=0" style="font-size:12px"> (Next question after this choice is Question{{c.NextQuestionNo}})</span>
                                     <br />
                                 </span>
                             </span>
-                        </fieldset>
-                        <div>
-                            <uif-button type="button" ng-if="showCode" ng-click="toggleShowCode()">Hide code</uif-button><uif-button type="button" ng-if="!showCode&&!editmode" ng-click="toggleShowCode();appendDialog();">See code</uif-button>
-                            <uif-button type="button" ng-if="!showCode&&editmode" ng-click="toggleShowCode();isQuestionDirty?appendDialog():null;">See code</uif-button>
-
-                         </div>
+                        </fieldset>                        
+                        <div style="display:inline-block">
+                            <uif-button type="button" ng-click="toggleShowCode()"><span ng-if="showCode">Hide code</span><span ng-if="!showCode">See code</span></uif-button>
+                        </div>
+                        <div ng-show="editmode" style="display:inline-block">
+                            <uif-button type="button" ng-model="createNewDialog" ng-click="createNewDialog=true">Re-create dialog</uif-button>
+                        </div>
                     </div>
                     <div ng-if="showCode">
                         <span>Edit dialog manually </span><input type="checkbox" ng-model="developerMode" /><br />
@@ -99,9 +106,10 @@
                     <legend>Recipients</legend>
                     <div>
                         <div class="ms-Label">Test Receiver</div>
-                        <input type="text" ng-model="testReceiver"
+                        <input type="text" style="margin-bottom:3px" ng-model="testReceiver"
                                placeholder="Email address for dialog test">
-                        <uif-button uif-type="primary" ng-click="newRule.dialog==null||isQuestionDirty?appendDialog():null;notificationForm.$valid&&testDialog(newRule)">test</uif-button>
+                        <uif-button uif-type="primary" ng-click="notificationForm.$valid&&testDialog(newRule)">test</uif-button>
+                        <span ng-show="showSentAlert" color="red">Test data has been sent</span>
                     </div>
                     <div class="ms-Grid">
                         <div class="ms-Grid-row">
@@ -131,10 +139,10 @@
 
                 <div>
 
+                   
+                    <uif-button uif-type="primary" ng-show="!editmode" style="margin-left:10px;float:right" ng-click="notificationForm.$valid&&create(newRule)">create</uif-button>
+                    <uif-button ng-show="editmode" uif-type="primary" style="margin-left:10px;float:right" ng-click="notificationForm.$valid&&edit(newRule)">save</uif-button>
                     <uif-button style="margin-left:10px;float:right" ng-click="cancel()">cancel</uif-button>
-                    <uif-button uif-type="primary" ng-show="!editmode" style="margin-left:10px;float:right" ng-click="isQuestionDirty?appendDialog():null;notificationForm.$valid&&create(newRule)">create</uif-button>
-                    <uif-button ng-show="editmode" uif-type="primary" style="margin-left:10px;float:right" ng-click="notificationForm.$valid&&edit(newRule)">edit</uif-button>
-
                 </div>
             </form>
         </div>

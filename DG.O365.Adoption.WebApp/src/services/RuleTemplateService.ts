@@ -30,7 +30,7 @@
                         temp += '    var message="";\n';
                     }
                     var choiceValLower = choice.ChoiceValue.toLowerCase();
-                    temp += '    if (text.ToLower() == "' + choiceValLower + '") \n'
+                    temp += '    if (text.ToLower().Contains( "' + choiceValLower + '")) \n'
                         + '    {\n'
                         + ' message = "' + choice.Text + '"; ';
 
@@ -45,7 +45,7 @@
                             choiceStr = choiceStr.substr(1);
 
                             temp += '    string[] choices = {' + choiceStr + '};\n'
-                                + '    var prompt = new PromptDialog.PromptChoice<string>(choices, message, "I didn\'t understand your answer.", 3);\n'
+                                + '    var prompt = new PromptDialog.PromptString(message, "I didn\'t understand your answer.", 3);\n'
                                 + '    context.Call(prompt, Question' + choice.NextQuestionNo + ');\n'
                                 + '    return;\n'
                                 + '    }\n'
@@ -58,15 +58,14 @@
                             + '    }\n';
                     }
                 }
-                if (questions[k].Id == 1) {
-
-                    temp += '    else\n    {\n'
-                        + '    await context.PostAsync("Sorry, I didn\'t understand your answer"); \n'
-                        + '    context.Wait(MessageReceivedAsync);\n'
-                        + '    }\n';
 
 
-                }
+                temp += '    else\n    {\n'
+                    + '    await context.PostAsync("Sorry, I didn\'t understand your answer"); \n'
+                    + '    context.Wait(MessageReceivedAsync);\n'
+                    + '    }\n';
+
+
                 temp += '  }\n\n';
             }
             temp += '}\n}';
@@ -90,7 +89,7 @@
         '  public class ExampleDialog : IDialog<object> {\n' +
         '    public async Task StartAsync(IDialogContext context)\n' +
         '    {\n      context.Wait(MessageReceivedAsync);\n    }\n\n' +
-        '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable < IMessageActivity > argument)\n' +
+        '    public async Task MessageReceivedAsync(IDialogContext context, IAwaitable <IMessageActivity> argument)\n' +
         '    {\n      var message = await argument;\n' +
         '      await Question1(context, message.Text);\n' +
         '      return;\n    }\n';

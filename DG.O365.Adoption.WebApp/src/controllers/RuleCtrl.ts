@@ -3,13 +3,14 @@
 module ruleengine {
 
     export class RuleCtrl {
-        public static $inject = ['$scope', 'ruleService', 'ruleTemplateService'];
+        public static $inject = ['$scope', 'ruleService', 'ruleTemplateService', '$timeout'];
 
 
         constructor(
             private $scope: IRuleScope,
             private ruleService: IRuleService,
-            private ruleTemplateService: IRuleTemplateService
+            private ruleTemplateService: IRuleTemplateService,
+            private $timeout: ng.ITimeoutService
         ) {
             var defaultQuestion: Question = { Id: 1, Choices: [{ ChoiceValue: "Yes", Text: "Do you want to know more about this?", NextQuestionNo: 0 }, { ChoiceValue: "No", Text: "All right! Have a good day!", NextQuestionNo: 0 }] };
 
@@ -21,8 +22,24 @@ module ruleengine {
             $scope.users = [];
             $scope.selectedGroup = $scope.selectedUser = "";
             $scope.showCode = false;
+            $scope.showRuleAlert = false;
+            $scope.showSentAlert = false;
+            $scope.createNewDialog = false;
+            $scope.ruleAlert = "";
+            $scope.queries = [
+                "Operation eq 'SharingSet'",
+                "Operation eq 'UserLoggedIn'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileAccessed'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileUploaded'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileCheckedIn' or Operation eq 'FileCheckedOut'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileCopied'",
+                "ServiceType eq 'SharePoint' and Operation eq 'FileSyncDownloadedPartial' or Operation eq 'FileSyncDownloadedFull'",
+                "ServiceType eq 'Yammer' and Operation eq 'FileCreated'",
+                "ServiceType eq 'Yammer' and Operation eq 'GroupCreation'",
+                "ServiceType eq 'PowerBI' and Operation eq 'ViewReport'",
+                "ServiceType eq 'PowerBI' and Operation eq 'CreateDashboard'"
+            ]
             var currentQno: number = 1;
-
             var fillDefaultQuestion = () => {
                 $scope.questions = [];
                 $scope.questions.push(defaultQuestion);
@@ -35,10 +52,7 @@ module ruleengine {
 
             }
 
-            $scope.appendDialog = () => {
-
-                $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
-            }
+           
 
             $scope.addQuestion = (choice: Choice) => {
                 currentQno += 1;
@@ -80,7 +94,6 @@ module ruleengine {
                     alert("Error! Failed to load rules.");
                     console.log("Error has occured: " + err);
                 });
-                $scope.isQuestionDirty = false;
             };
 
             var getUsers = () => {
@@ -106,7 +119,7 @@ module ruleengine {
                 $scope.newRule = {};
                 $scope.selectedGroup = $scope.selectedUser = "";
                 fillDefaultQuestion();
-                $scope.isQuestionDirty = false;
+                $scope.createNewDialog = false;
                 $scope.isOpen = false;
                 $scope.showCode = false;
             }
@@ -144,7 +157,9 @@ module ruleengine {
                     rule = acquireReceiver(rule);
                     ruleService.addRule(rule).then(() => {
                         $scope.cancel();
-                        alert("Rule \"" + rule.name + "\" has been added successfully!");
+                        $scope.ruleAlert = "Rule \"" + rule.name + "\" has been added successfully!";
+                        $scope.showRuleAlert = true;
+                        $timeout(() => { $scope.showRuleAlert = false; }, 3000);   
                         load();
                         $scope.selectedGroup = $scope.selectedUser = "";
                     }).catch((err) => {
@@ -169,9 +184,10 @@ module ruleengine {
                         dialog: rule.dialog
                     }
                     ruleService.testDialog(testData).then(() => {
-                        alert("test data sent!");
+                        $scope.showSentAlert = true; 
+                        $timeout(() => { $scope.showSentAlert = false; }, 3000);  
                     }).catch((err) => {
-                        alert("Error! Rule has not been added.");
+                        alert("Error! Test data has not been sent.");
                         console.log("Error has occured: " + err);
                     });
                 }
@@ -198,7 +214,10 @@ module ruleengine {
                     rule = acquireReceiver(rule);
                     ruleService.editRule(rule).then(() => {
                         $scope.cancel();
-                        alert("Rule \"" + rule.name + "\" has been changed successfully!");
+                        $scope.ruleAlert = "Rule \"" + rule.name + "\" has been changed successfully!";
+                        $scope.showRuleAlert = true;
+                        $timeout(() => { $scope.showRuleAlert = false; }, 3000);          
+                     
                         load();
                     })
                         .catch((err) => {
@@ -211,7 +230,9 @@ module ruleengine {
             $scope.delete = (rule) => {
                 ruleService.deleteRule(rule).then(() => {
                     $scope.cancel();
-                    alert("Rule \"" + rule.name + "\" has been deleted successfully!")
+                    $scope.ruleAlert = "Rule \"" + rule.name + "\" has been deleted successfully!";
+                    $scope.showRuleAlert = true;
+                    $timeout(() => { $scope.showRuleAlert = false; }, 3000);                   
                     load();
                 })
                     .catch((err) => {
@@ -233,8 +254,7 @@ module ruleengine {
             });
             $scope.$watch('questions', (newValue: any, oldValue: any) => {
                 if (newValue != oldValue) {
-
-                    $scope.isQuestionDirty = true;
+                    $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);       
                 }
             }, true);
 

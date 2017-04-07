@@ -21,10 +21,13 @@
         addQuestion(choice: Choice): void;
         removeQuestion(choice: Choice): void;
         addChoice(question: Question): void;
-        questions: Question[];
-        appendDialog(): void;
+        questions: Question[];    
         removeChoice(question: Question, index: number): void;    
         toggleShowCode(): void;
         showCode: boolean;
-        isQuestionDirty: boolean;
+        ruleAlert: string;
+        showRuleAlert: boolean;
+        createNewDialog: boolean;
+        showSentAlert: boolean;
+        queries: string[];
 }}

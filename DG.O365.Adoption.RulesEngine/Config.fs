@@ -11,11 +11,18 @@ module Config =
     |> Seq.map (fun e -> e.Key :?> string, e.Value :?> string)
     |> dict
 
-
   let LoadConfigValue (v:string) =
-    let appsettings = new Configuration.AppSettingsReader() 
-    ConfigurationManager.AppSettings.Get(v); 
-      
+    let appsettings = new Configuration.AppSettingsReader()
+    let ret =
+      match Environment.GetEnvironmentVariable("APPSETTING_" + v) with
+      | null -> match Environment.GetEnvironmentVariable(v) with
+                | null -> ConfigurationManager.AppSettings.Get(v); 
+                | s -> s
+      | s -> s
+    match ret with
+    | null -> String.Empty
+    | s -> s 
+
   type Settings =
    { RuleEngineConnectionString :string
      DaleConnectionString :string
