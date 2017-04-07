@@ -6,8 +6,8 @@ var ruleengine;
             this.ruleService = ruleService;
             this.ruleTemplateService = ruleTemplateService;
             this.$timeout = $timeout;
-            var defaultQuestion = { Id: 1, Choices: [{ ChoiceValue: "Yes", Text: "Do you want to know more about this?", NextQuestionNo: 0 }, { ChoiceValue: "No", Text: "All right! Have a good day!", NextQuestionNo: 0 }] };
             $scope.rules = [];
+            $scope.questionNumbers = [1];
             $scope.newRule = {};
             $scope.editmode = false;
             $scope.isOpen = false;
@@ -34,6 +34,7 @@ var ruleengine;
             ];
             var currentQno = 1;
             var fillDefaultQuestion = function () {
+                var defaultQuestion = { Id: 1, Choices: [{ ChoiceValue: "Yes", Text: "Do you want to know more about this?", NextQuestionNo: 0 }, { ChoiceValue: "No", Text: "All right! Have a good day!", NextQuestionNo: 0 }] };
                 $scope.questions = [];
                 $scope.questions.push(defaultQuestion);
             };
@@ -44,7 +45,7 @@ var ruleengine;
                 question.Choices.splice(index, 1);
             };
             $scope.addQuestion = function (choice) {
-                currentQno += 1;
+                currentQno++;
                 choice.NextQuestionNo = currentQno;
                 var nextQuestion = { Id: currentQno, Choices: [{ ChoiceValue: "", Text: "", NextQuestionNo: 0 }, { ChoiceValue: "", Text: "", NextQuestionNo: 0 }] };
                 $scope.questions.push(nextQuestion);
@@ -94,6 +95,7 @@ var ruleengine;
                 }
                 $scope.newRule = {};
                 $scope.editmode = false;
+                fillDefaultQuestion();
             };
             $scope.cancel = function () {
                 $scope.isOpen = false;
@@ -228,7 +230,12 @@ var ruleengine;
             });
             $scope.$watch('questions', function (newValue, oldValue) {
                 if (newValue != oldValue) {
+                    console.log($scope.questions);
                     $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
+                    $scope.questionNumbers = [];
+                    angular.forEach($scope.questions, function (val, key) {
+                        $scope.questionNumbers.push(val.Id);
+                    });
                 }
             }, true);
             load();

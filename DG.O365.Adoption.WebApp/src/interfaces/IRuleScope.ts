@@ -1,9 +1,9 @@
-﻿module ruleengine{
+﻿module ruleengine {
     export interface IRuleScope extends ng.IScope {
         rules: any;
         newRule: any;
         editmode: boolean;
-        isOpen:boolean;
+        isOpen: boolean;
         open(): void;
         cancel(): void;
         toEditmode(rule: any): void;
@@ -16,13 +16,13 @@
         groups: any;
         users: any;
         selectedGroup: any;
-        selectedUser: any;       
+        selectedUser: any;
         testReceiver: string;
         addQuestion(choice: Choice): void;
         removeQuestion(choice: Choice): void;
         addChoice(question: Question): void;
-        questions: Question[];    
-        removeChoice(question: Question, index: number): void;    
+        questions: Question[];
+        removeChoice(question: Question, index: number): void;
         toggleShowCode(): void;
         showCode: boolean;
         ruleAlert: string;
@@ -30,4 +30,7 @@
         createNewDialog: boolean;
         showSentAlert: boolean;
         queries: string[];
-}}
+        addToExistingQuestion(choice: Choice, nextQNumber: number): void;
+        questionNumbers: number[];
+    }
+}

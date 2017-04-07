@@ -12,9 +12,9 @@ module ruleengine {
             private ruleTemplateService: IRuleTemplateService,
             private $timeout: ng.ITimeoutService
         ) {
-            var defaultQuestion: Question = { Id: 1, Choices: [{ ChoiceValue: "Yes", Text: "Do you want to know more about this?", NextQuestionNo: 0 }, { ChoiceValue: "No", Text: "All right! Have a good day!", NextQuestionNo: 0 }] };
 
             $scope.rules = [];
+            $scope.questionNumbers = [1];
             $scope.newRule = {};
             $scope.editmode = false;
             $scope.isOpen = false;
@@ -41,8 +41,10 @@ module ruleengine {
             ]
             var currentQno: number = 1;
             var fillDefaultQuestion = () => {
+                var defaultQuestion: Question = { Id: 1, Choices: [{ ChoiceValue: "Yes", Text: "Do you want to know more about this?", NextQuestionNo: 0 }, { ChoiceValue: "No", Text: "All right! Have a good day!", NextQuestionNo: 0 }] };
                 $scope.questions = [];
                 $scope.questions.push(defaultQuestion);
+
             }
             $scope.addChoice = (question: Question) => {
                 question.Choices.push({ ChoiceValue: "", Text: "", NextQuestionNo: 0 });
@@ -52,14 +54,15 @@ module ruleengine {
 
             }
 
-           
+
 
             $scope.addQuestion = (choice: Choice) => {
-                currentQno += 1;
+                currentQno++;
                 choice.NextQuestionNo = currentQno;
                 var nextQuestion: Question = { Id: currentQno, Choices: [{ ChoiceValue: "", Text: "", NextQuestionNo: 0 }, { ChoiceValue: "", Text: "", NextQuestionNo: 0 }] };
                 $scope.questions.push(nextQuestion);
             }
+
 
             $scope.removeQuestion = (choice: Choice) => {
 
@@ -111,6 +114,7 @@ module ruleengine {
                 }
                 $scope.newRule = {};
                 $scope.editmode = false;
+                fillDefaultQuestion();
             }
 
             $scope.cancel = () => {
@@ -159,7 +163,7 @@ module ruleengine {
                         $scope.cancel();
                         $scope.ruleAlert = "Rule \"" + rule.name + "\" has been added successfully!";
                         $scope.showRuleAlert = true;
-                        $timeout(() => { $scope.showRuleAlert = false; }, 3000);   
+                        $timeout(() => { $scope.showRuleAlert = false; }, 3000);
                         load();
                         $scope.selectedGroup = $scope.selectedUser = "";
                     }).catch((err) => {
@@ -184,8 +188,8 @@ module ruleengine {
                         dialog: rule.dialog
                     }
                     ruleService.testDialog(testData).then(() => {
-                        $scope.showSentAlert = true; 
-                        $timeout(() => { $scope.showSentAlert = false; }, 3000);  
+                        $scope.showSentAlert = true;
+                        $timeout(() => { $scope.showSentAlert = false; }, 3000);
                     }).catch((err) => {
                         alert("Error! Test data has not been sent.");
                         console.log("Error has occured: " + err);
@@ -216,8 +220,8 @@ module ruleengine {
                         $scope.cancel();
                         $scope.ruleAlert = "Rule \"" + rule.name + "\" has been changed successfully!";
                         $scope.showRuleAlert = true;
-                        $timeout(() => { $scope.showRuleAlert = false; }, 3000);          
-                     
+                        $timeout(() => { $scope.showRuleAlert = false; }, 3000);
+
                         load();
                     })
                         .catch((err) => {
@@ -232,7 +236,7 @@ module ruleengine {
                     $scope.cancel();
                     $scope.ruleAlert = "Rule \"" + rule.name + "\" has been deleted successfully!";
                     $scope.showRuleAlert = true;
-                    $timeout(() => { $scope.showRuleAlert = false; }, 3000);                   
+                    $timeout(() => { $scope.showRuleAlert = false; }, 3000);
                     load();
                 })
                     .catch((err) => {
@@ -254,7 +258,13 @@ module ruleengine {
             });
             $scope.$watch('questions', (newValue: any, oldValue: any) => {
                 if (newValue != oldValue) {
-                    $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);       
+                    console.log($scope.questions)
+                    $scope.newRule.dialog = ruleTemplateService.getQuestionTemplate($scope.questions);
+                    $scope.questionNumbers = [];
+                    angular.forEach($scope.questions, (val, key) => {
+                        $scope.questionNumbers.push(val.Id);
+
+                    });
                 }
             }, true);
 
