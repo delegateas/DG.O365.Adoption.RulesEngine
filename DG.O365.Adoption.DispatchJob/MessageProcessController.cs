@@ -57,9 +57,11 @@ namespace DG.O365.Adoption.DispatchJob
                     var notification = JsonConvert.SerializeObject(updatedNotification);
                     var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                     var delay = 10 * (Math.Pow(dcount + 1, dcount));
+                    if (delay > 42000) { delay = 42000; }//max delay = 700 hours
                     await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(delay), null, null);
-                    UpdateNotificationHistory(notificationMsg, status);
+                 
                 }
+                UpdateNotificationHistory(notificationMsg, status);
             }
             catch (Exception ex)
             {
@@ -67,7 +69,7 @@ namespace DG.O365.Adoption.DispatchJob
                 var notification = JsonConvert.SerializeObject(notificationMsg);
                 var buffer = System.Text.Encoding.UTF8.GetBytes(notification);
                 await queue.AddMessageAsync(new CloudQueueMessage(buffer), null, TimeSpan.FromMinutes(1), null, null);
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex);
                 status = Status.Queued;
                 UpdateNotificationHistory(notificationMsg, status);
             }
@@ -83,14 +85,15 @@ namespace DG.O365.Adoption.DispatchJob
         {
 
             var res = await client.GetAsync(baseUrl + "api/presence?sip=" + name);
-            var content = await res.Content.ReadAsStringAsync(); try
+            var content = await res.Content.ReadAsStringAsync();
+            try
             {
                 return Boolean.Parse(await res.Content.ReadAsStringAsync());
             }
             catch (Exception ex)
             {
                 new TelemetryClient().TrackException(ex.InnerException);
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex);
                 return false;
             }
         }
